@@ -1,0 +1,267 @@
+\documentclass[a4paper,11pt,twoside]{article}
+\usepackage[utf8]{inputenc}	%% Text coding
+\usepackage[czech]{babel}
+\usepackage{epsfig,subfigure}
+\usepackage{amsfonts,amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[unicode]{hyperref}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{xifthen}
+\usepackage{amsthm}
+
+\hypersetup{
+	pdftitle={Využití počítačů ve fyzice},
+	pdfauthor={Pavel Stránský},
+	pdffitwindow=true,
+	colorlinks=true,
+	urlcolor=cyan,            %barva textu pri tisku
+	linkcolor=red,
+	citecolor=green,
+	filecolor=magenta
+}
+
+% Velikost stránky
+\addtolength{\topmargin}{-1.5cm} %\addtolength{\textheight}{-10cm}
+\addtolength{\textwidth}{4cm} \addtolength{\textheight}{4cm} % Šířka a výška textu
+\addtolength{\voffset}{-0.5cm} % Horní okraj
+\addtolength{\hoffset}{-2cm}
+\setlength{\headheight}{15pt}
+
+\pagestyle{fancy}
+
+\def\vector#1{\boldsymbol{#1}}								% Vector
+\renewcommand{\d}{\mathrm{d}}
+\newcommand{\derivative}[3][]{\ifthenelse{\isempty{#1}}	    % Normal derivative
+	{\frac{\d{#2}}{\d{#3}}}
+	{\frac{\d^{#1}{#2}}{\d{#3}^{#1}}}
+}
+%\def\example{\textbf{\textit{Příklad:}}}
+%\def\example{\subsubsection*{Příklad:}}
+\def\makematrix#1{\begin{pmatrix}#1\end{pmatrix}}       % Matrix
+
+%\theoremstyle{definition}
+
+\begin{document}
+\newtheorem{example}{Příklad}[section]
+\newtheorem{task}{Úkol}[section]
+
+\title{Zápisky k předmětu Využití počítačů ve fyzice}
+\date{\today}
+\author{Pavel Stránský}
+
+\maketitle
+
+\section{Obyčejné diferenciální rovnice}
+    Každou obyčejnou diferenciální rovnici $n$-tého řádu lineární v nejvyšší derivaci lze převést na soustavu
+    $n$ obyčejných diferenciálních rovnic prvního řádu ve tvaru
+    \begin{equation}\label{eq:ODR}
+        \derivative{\vector{x}}{t}=\vector{f}(\vector{x},t),
+    \end{equation}
+    kde $\vector{x}=\vector{x}(t)$ je vektor hledaných funkcí.
+
+\begin{example}
+    Pohybovou rovnici
+    \begin{equation}
+        Ma=F(y),
+    \end{equation}
+    kde $M$ je hmotnost pohybujícího se tělesa, $y=y(t)$ jeho poloha a $a=a(t)=\d^{2}y/\d t^{2}$ převedeme
+    na dvě diferenciální rovnice prvního řádu triviálním zavedením rychlosti $v=v(t)=\d y/\d t$:
+    \begin{equation}
+        \derivative{}{t}\makematrix{y \\ v}=\makematrix{v \\ \frac{1}{M}F(y)},
+    \end{equation}
+    tj. vektor funkce pravých stran podle rovnice~\eqref{eq:ODR} je
+    \begin{equation}
+        \vector{f}(\vector{x},t)=\makematrix{v \\ \frac{1}{M}F(y)}
+    \end{equation}
+    kde $\vector{x}\equiv(y,v)$.
+\end{example}
+
+\begin{example}
+    Pohybová rovnice pro harmonický oscilátor (matematické kyvadlo s malou výchylkou) při volbě jednotek $M=\Omega=1$, kde $M$ je hmotnost kmitající částice a $\Omega$ její rychlost, zní
+    \begin{align}
+        a&=\derivative[2]{y}{t}=-y &&\Longleftrightarrow &
+        \derivative{}{t}\makematrix{y \\ v}&=\makematrix{v \\ t}
+    \end{align}
+
+\end{example}
+
+\begin{task}
+    Převeďte na soustavu obyčejných diferenciálních rovnic prvního řádu rovnici třetího řádu pro Hiemenzův tok
+    \begin{equation}
+        y'''+yy''-y'^{2}+1=0.
+    \end{equation}
+\end{task}
+
+\subsection{Diferenciální rovnice prvního řádu}
+    Drtivá většina knihoven a algoritmů pro integraci diferenciálních rovnic počítá s rovnicemi ve tvaru~\eqref{eq:ODR}.
+    Zde se omezíme na jednu rovnici
+    \begin{equation}
+        \derivative{y}{t}=f(y,t),
+    \end{equation}
+    přičemž rozšíření na soustavu je triviální: místo skalárů $y$ a $f$ vezmeme vektory.
+
+    Řešení diferenciální rovnice spočívá v nahrazení infinitezimálních přírůstků přírůstky konečnými:
+    \begin{equation}\label{eq:Difference}
+        \frac{\Delta y}{\Delta t}=\phi(y,t)
+    \end{equation}
+    kde $\phi$ je funkce, která udává směr, podél kterého se při numerickém řešení vydáme.
+    Volbá této funkce je klíčová a záleží na ní, jak přesné řešení dostaneme a jak rychle ho dostaneme.
+
+    \subsubsection{Pár důležitých pojmů}
+    \begin{itemize}
+        \item {\bf Jednokrokové algoritmy:}
+        Algoritmy, které výpočtu následujícího kroku hodnoty funkce $y_{i+1}$ vyžadují znalost pouze aktuálního kroku $y_{i}$.
+        Rozepsáním~\eqref{eq:Difference} dostaneme
+        \begin{equation}
+            \boxed{
+                y_{i+1}=y_{i}+\underbrace{\phi(y_{i},t)}_{\phi_{i}}\Delta t
+            },
+        \end{equation}
+        přičemž počáteční hodnota $y_{0}$ je dána počáteční podmínkou.
+        My se omezíme pouze na tyto algoritmy.
+
+        \item {\bf Lokální diskretizační chyba:}
+        \begin{equation}
+            \mathcal{L}=y(t+\Delta t)-y(t)-\phi(y(t),t)\Delta t,
+        \end{equation}        
+        kde $y(t)$ udává přesné řešení v čase $t$.
+
+        \item {\bf Akumulovaná diskretizační chyba:}
+        \begin{equation}
+            \epsilon_{i}=y_{i}-y(t_{i})
+        \end{equation}
+
+        \item {\bf Řád metody:} 
+        Metoda je $p$-tého řádu, pokud
+        \begin{equation}\label{eq:MethodOrder}
+            L(\Delta t)=\mathcal{O}(\Delta t^{p+1})
+        \end{equation}
+
+        \item {\bf Symplektické algoritmy:}
+        Speciální algoritmy navržené pro řešení pohybových diferenciálních rovnic.
+        Od běžných algoritmů je odlišuje to, že zachovávají objem fázového prostoru, a tedy i energii (zatímco u obecných algoritmů energie s integračním časem roste).
+        V praxi se ze symplektických algoritmů používá pouze Verletův algoritmus~\ref{sec:Verlet}.
+
+        \item {\bf Kontrola chyby řešení:}
+        Chybu numerického řešení diferenciální rovnice lze zmenšit 1) menším krokem, 2) lepší metodou (metodou vyššího řádu). 
+        Menší krok však znamená vyšší výpočetní čas.
+        Sofistikované metody proto průběžně mění velikost kroku: když se funkce mění pomalu, krok prodlouží, když se mění rychle, krok zkrátí (tzv. {\bf metody s adaptivním krokem}).
+        Tím se docílí vysoké přesnosti při co nejmenším výpočetním čase.
+
+    \end{itemize}
+
+    \subsubsection{Eulerova metoda 1. řádu}
+        \begin{equation}\label{eq:Euler1}
+            \phi_{i}=f(y_{i},t_{i}),
+        \end{equation}
+        tj. krok do $y_{i+1}$ děláme vždy ve směru tečny v bodě $y_{i}$.
+
+        \begin{itemize}
+            \item Nejjednodušší metoda integrace diferenciálních rovnic.
+            \item Chyba je obrovská, k dosažení přesných hodnot je potřeba velmi malého kroku, což znamená dlouhý výpočetní čas.
+        \end{itemize}
+
+    \subsubsection{Eulerova metoda 2. řádu}
+        \begin{align}\label{eq:Euler2a}
+            k_{1}&=f(y_{i},t_{i})\nonumber\\
+            k_{2}&=f\left(y_{i}+k_{1}\Delta t,t+\Delta t\right)\\
+            \phi_{i}&=\frac{1}{2}\left(k_{1}+k_{2}\right),\nonumber
+        \end{align}
+        tj. uděláme jednoduchý Eulerův krok ve směru $k_{1}$, spočítáme derivaci $k_{2}$ po tomto kroku a vyrazíme z bodu $y_{i}$ ve směru, který je průměrem obou směrů (doporučuji si nakreslit obrázek).
+
+        Ekvivalentní je udělat \uv{Eulerův půlkrok} a vyrazit z bodu $y_{i}$ ve směru derivace spočtené po tomto půlkroku:
+        \begin{align}\label{eq:Euler2b}
+            k'_{1}&=f(y_{i},t_{i})\nonumber\\
+            k'_{2}&=f\left(y_{i}+k'_{1}\frac{\Delta t}{2},t+\frac{\Delta t}{2}\right)\\
+            \phi_{i}&=k'_{2}\nonumber
+        \end{align}
+
+    \subsection{Runge-Kuttova metoda 4. řádu}
+        \begin{align}\label{eq:RungeKutta}
+            k_{1}&=f(y_{i},t_{i})\nonumber\\
+            k_{2}&=f\left(y_{i}+k_{1}\frac{\Delta t}{2},t+\frac{\Delta t}{2}\right)\nonumber\\
+            k_{3}&=f\left(y_{i}+k_{2}\frac{\Delta t}{2},t+\frac{\Delta t}{2}\right)\\
+            k_{4}&=f\left(y_{i}+k_{3}\Delta t,t+\Delta t\right)\nonumber\\
+            \phi_{i}&=\frac{1}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)\nonumber
+        \end{align}
+        
+        \begin{itemize}
+            \item Jedna z nejčastěji používaných metod.
+            \item Vysoká rychlost a přesnost při relativní jednoduchosti.
+            \item Existují i Runge-Kuttovy metody vyššího řádu $p$, avšak vyžadují výpočet více než $p$ dílčích derivací $k_{j}$.
+            Obecně platí, že metoda řádu $p\leq4$ vyžaduje $p$ derivací, metoda řádu $5\leq<p\leq7$ vyžaduje $p+1$ derivací a metoda řádu $p=8,9$ vyřaduje $p+2$ derivací.
+        \end{itemize}
+
+    \subsection{Verletova metoda}\label{sec:Verlet}
+        Pro rovnici 2. řádu ve tvaru (pohybovou rovnici)
+        \begin{equation}\label{eq:EM}
+            M\derivative[2]{y}{t}=F(y),
+        \end{equation}
+        kde $M$ je hmotnost pohybující se částice a $F$ síla, která na ni působí.
+        Algoritmus je
+        \begin{align}
+            y_{i+1}&=y_{i}+v_{i}\Delta t+\frac{1}{2}a_{i}\Delta t^{2},\nonumber\\
+            v_{i+1}&=v_{i}+\frac{1}{2}\left(a_{i+1}+a_{i}\right)\Delta t,
+        \end{align}
+        kde $a_{i}\equiv F(y_{i})/M$.
+
+        \begin{itemize}
+            \item Symplektický algoritmus, tj. algoritmus zachovávající energii (pokud systém popsaný rovnicí~\eqref{eq:EM} energii zachovává).
+            \item Užívá se nejčastěji v molekulární dynamice k simulaci pohybu velkého množství vzájemně interagujících částic.
+            \item Řád této metody je $p=2$. Symplektické algoritmy s vyšším řádem existují, avšak v praxi se nepoužívají.
+        \end{itemize}
+
+    \begin{task}
+        Naprogramujte Eulerovu metodu 1. a 2. řádu\footnote{Tyto metody jsme již naprogramovali na cvičení minulý týden.}, Runge-Kuttovu metodu a Verletovu metodu a vyřešte diferenciální rovnici harmonického oscilátoru
+        \begin{equation}
+            \derivative[2]{y}{t}=-y
+        \end{equation}
+        s počátečními podmínkami $y_{0}=0$, $y'_{0}\equiv v_{0}=1$ (funkce $\sin t$).
+        Časový krok ponechte jako volný parametr.
+        Nakreslete grafy řešení $y(t)$ a grafy energie $E(t)$ pro rozdílné hodnoty integračních kroků, například $\Delta t=0.01$ a $\Delta t=0.1$ pro čas $t\in\langle0;30\rangle$.
+        Energie harmonického oscilátoru je dána vzorcem
+        \begin{equation}
+            E=\frac{1}{2}\left(y^{2}+v^{2}\right).
+        \end{equation}
+        Přesvědčte se, že jediná Verletova metoda skutečně zachovává energii. 
+        Pro ostatní metody energie roste.
+    \end{task}
+
+    \begin{task}
+        Rozšiřte kód tak, aby počítal kumulovanou kvadratickou chybu
+        \begin{equation}
+            \mathcal{E}=\sqrt{\sum_{i}\left(y_{i}-\sin t_{i}\right)^{2}}
+        \end{equation}
+        a nakreslete závislost $E(\Delta t)$ pro $\Delta t\in\langle0.002;0.1\rangle$ a pro různé metody.
+        Jelikož očekáváme mocninnou závislost dle~\eqref{eq:MethodOrder}, kde exponent je tím větší, čím větší je řád metody, je výhodné graf $E(\Delta t)$ kreslit v log-log měřítku.
+        V Pythonu použijete místo \textnormal{\texttt{plot(...)}} funkci \textnormal{\texttt{loglog(...)}} z knihovny \textnormal{\texttt{matplotlib.pyplot}}.
+    \end{task}
+
+    \begin{task}
+        Eulerovu metodu 1. řádu lze pro harmonický oscilátor vylepšit následující záměnou:
+        \begin{align}
+            &\begin{matrix}
+                y_{i+1}=y_{i}+v_{i}\Delta t \\
+                v_{i+1}=v_{i}-y_{i}\Delta t 
+            \end{matrix}
+            &&\longrightarrow
+            &\begin{matrix}
+                y_{i+1}=y_{i}+v_{i}\Delta t \\
+                v_{i+1}=v_{i}-y_{i+1}\Delta t 
+            \end{matrix}
+        \end{align}
+        (vypočítáme $y_{i+1}$ a tuto hodnotu použijeme namísto hodnoty $y_{i}$ pro výpočet rychlosti $v_{i+1}$).
+        Naprogramujte tuto metodu u ukažte, že pro harmonický oscilátor se jedná o metodu 2. řádu.
+        Využijte srovnání v grafu z předchozí úlohy.
+    \end{task}
+
+    \begin{task}
+        Využijte hotové kódy a pohrajte si s řešením rovnice pro klesající exponenciálu
+        \begin{equation}
+            \derivative[2]{y}{t}=y
+        \end{equation}
+        s počátečními podmínkami $y_{0}=1$, $y'_{0}=-1$.
+        Přesvědčte se, že Verletova metoda a vylepšená Eulerova metoda z posledního bodu jsou nestabilní --- pro tuto rovnici v relativně krátkém čase začnou řešení exponenciálně divergovat.
+    \end{task}
+\end{document}
