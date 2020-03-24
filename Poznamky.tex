@@ -253,7 +253,7 @@
     \end{task}
 
     \begin{solution}
-        Jedno možné řešení je rozděleno do dvou souborů \file{ODE.py} a \file{Oscillator.py}, které můžete stáhnout z GitHubu \textnormal{\url{https://www.github.com/PavelStransky/PCInPhysics}}  (o GitHubu bude pojednáno v sekci~\ref{sec:github}). 
+        Jedno možné řešení je rozděleno do dvou souborů \file{ODE.py} a \file{Oscillator.py}, které můžete stáhnout z GitHubu \textnormal{\url{https://www.github.com/PavelStransky/PCInPhysics}}  (o GitHubu bude pojednáno v sekci~\ref{sec:GITRemote}). 
 
         \begin{itemize}
         \item \file{ODE.py}: 
@@ -463,5 +463,145 @@
 
     \end{itemize}
     A nyní již umíte vypočítat a nakreslit průběh funkce sinus :-)
+
+\section{Git (pokračování)}
+    \subsection{Vzdálené repozitáře}\label{sec:GITRemote}
+        Verzovací systém GIT umí kromě sledování a uchovávání historie změn souborů vašeho projektu i koordinovat změny, které provádí na projektu více řešitelů (pracovní tým). 
+        K tomu slouží vzdálené repozitáře.
+        Mezi nejrozšířenější systémy patří
+        \begin{itemize}
+        \item \href{https://github.com}{GitHub}: 
+            Na něm si každý může zdarma zřídit vlastní repozitáře a používat je například k synchronizaci svého projektu mezi různými počítači, pro sdílení vlastních výtvorů s komunitou nebo právě pro spolupráci ve vlastním týmu. 
+        \item \href{https://gitlab.mff.cuni.cz}{GitLab}: 
+            Open source řešení, základní verze rovněž zdarma, k pokročilé verzi má MFF UK licenci.
+        \end{itemize}
+        Oba tyto systémy disponují webovým rozhraním, ze kterého lze projekty jednoduše spravovat, a rovněž desktopovými aplikacemi, které umožňují pracovat s lokálními repozitáři pomocí jednoduchého rozhraní.
+        Pro GitHub existuje například \href{https://desktop.github.com}{GitHub Desktop}, ale i spousta dalších.
+        Projekty mohou být soukromé (přístup k nim máte pouze vy či ti, kterým pošlete pozvánku) nebo veřejné (přístup má kdokoliv).
+
+        Tyto zápisky a vzorové ukázky kódů jsou veřejně na GitHubu a můžete k nim dostat na adrese \ref{https://github.com/PavelStransky/PCInPhysics}.
+        K dispozici je samozřejmě celý repozitář s historií se všemi commity a se všemi vývojovými větvemi.
+        Repozitář můžete stáhnout buď z uvedené webové stránky (zelené tlačítko \code{Clone or download}), nebo pomocí programu git.
+
+        \begin{itemize}
+        \item \code{git clone https://github.com/PavelStransky/PCInPhysics}
+        
+            Vytvoří adresář \code{PCInPhysics} a do něj stáhne celý repozitář.
+            V případě těchto zápisků se jedná o tento soubor v {\LaTeX}u,
+            výsledné PDF, EPS verze všech obrázků a všechny zdrojové kódy.
+
+        \item \code{git remote -v}
+        
+            V adresáři s lokálním repozitářem ukáže, na jaký vzdálený repozitář je navázaný.
+            Stejně jako základní větev se standardně jmenuje \code{master}, vzdálený repozitář se standardně jmenuje \code{origin}.
+            Vy můžete mít na jeden projekt navázáno více vzdálených repozitářů, každý pak samozřejmě musíte pojmenovat jinak.
+
+        \item \code{git remote add origin https://github.com/Uzivatel/VzdalenyRepozitar}
+        
+            Přidá do vašeho projektu odkaz na vzdálený repozitář.
+
+        \item \code{git remote show origin}
+        
+            Zobrazí informace o vzdáleném repozitáři.
+
+        \item \code{git pull}
+        
+            Do adresáře s lokálním repozitářem stáhne aktuální verzi aktuální větve.
+            Pokud máte lokálně rozpracované změny, stažení se nepovede.
+            Pokud máte uložené změny (commit), git se automaticky pokusí vaše změny sloučit se změnami v globálním repozitáři (merge).
+            
+        \item \code{git fetch}
+        
+            Stáhne celý vzdálený repozitář (všechny větve).
+        
+        \item \code{git push origin master}
+        
+            Do vzdáleného repozitáře \code{origin} zapíše vaši větev \code{master}.
+            Vzdálený repozitář může být nastaven tak, že vaše změny musí ještě někdo schválit.
+
+        \item \code{git push}
+    
+            Zkrácený zápis, pokud jste dříve nastavili pomocí příkazu \code{git push --set-upstream origin master} název lokální větve a příslušného vzdáleného repozitáře.
+
+        \end{itemize}
+
+        Další informace najdete například v \href{https://git-scm.com/book/cs/v2/Z%C3%A1klady-pr%C3%A1ce-se-syst%C3%A9mem-Git-Pr%C3%A1ce-se-vzd%C3%A1len%C3%BDmi-repozit%C3%A1%C5%99i}{dokumentaci}.
+
+        \begin{task}
+            Stáhněte si do svých počítačů (naklonujte si) z GitHubu repozitář s poznámkami k tomuto cvičení.
+            V budoucnu si pomocí příkazu \code{git pull} stahujte aktuální verze.
+            Můžete si vytvořit pracovní větev poznámek a v ní si s kódy hrát.
+            V hlavní větvi \code{master} se vám uchová originální verze ze vzdáleného repozitáře.
+        \end{task}
+
+        \begin{task}
+            Vytvořte si účet na GitHubu, vytvořte prázdný projekt a navažte si ho s dříve na cvičení vytvořeným lokálním repozitářem pomocí příkazů \code{git remote add} (plný příkaz výše).
+            Následně si do vzdáleného repozitáře nahrajte lokální repozitář pomocí příkazu \code{git push}. 
+        \end{task}
+
+    \subsection{.gitignore}
+        Překladače programovacích jazyků často vytvářejí v adresáři vašeho projektu dočasné pomocné soubory, které nechcete, aby se staly součástí repozitáře (tyto soubory nenesou žádnou relevantní informaci, navíc mohou na různých počítačích vypadat jinak podle toho, jaký překladač či jaké vývojové prostředí zrovna použijete).
+        Abyste mohli používat příkazy pro hromadné sledování či zapisování souborů \code{git add *} a \code{git commit -a}, musíte GITu naznačit, jaké soubory má ignorovat.
+        K tomu slouží soubor \code{.gitignore}.
+        
+        Každé pravidlo v souboru \code{.gitignore} zabírá jeden řádek.
+        Řádek, který začíná znakem \#, je ignorován a může sloužit například jako komentář.
+        Příklady jednotlivých řádků:
+        \begin{itemize}
+        \item \code{tajne.txt}
+            
+            Ignoruje soubor s názvem \code{tajne.txt} (může obsahovat třeba přihlašovací údaje k nějaké službě a ty rozhodně nechceme sdílet ani archivovat; nezapomeňte, že co je jednou zapsané v repozitáři, z něj až na výjimky nelze odstranit).
+
+        \item \code{*.log}
+        
+            Ignoruje všechny soubory s příponou \code{log},
+
+        \item \code{!important.log}
+
+            ale neignoruje soubor \code{important.log}.
+
+        \item \code{*.[oa]}
+
+            Ignoruje všechny soubory s příponou \code{o} nebo \code{a}.
+
+        \item \code{temp/}
+
+            Ignoruje všechny soubory v podadresáři \code{temp}.
+
+        \item \code{doc/**/*.pdf}
+        
+            Ignoruje všechny soubory s příponou \code{pdf} v podadresáři \code{doc} a ve všech jeho podadresářích.
+            Neignoruje však soubory s příponou \code{pdf} v hlavním adresáři projektu.
+        \end{itemize}
+        Další příklady jsou například~\href{https://www.atlassian.com/git/tutorials/saving-changes/gitignore}{zde}.
+
+        Pokud na GitHubu zakládáte nový projekt, můžete upřesnit, jaký programovací jazyk budete používat a GitHub automaticky vytvoří optimální soubor \code{.gitignore}.
+
+        \begin{task}
+            Podívejte se do souboru \code{.gitignore} v repozitáři k těmto zápiskům.
+            Zatímco Python si téměř žádné pomocné soubory nevytváří, {\LaTeX} jich generuje požehnaně.
+            Proto je tento soubor celkem dlouhý. 
+        \end{task}
+
+\section{Náhodná procházka}
+    Náhodná procházka je jeden ze základních prostředků, jak simulovat velké množství nejen fyzikálních procesů (například pohyb Brownovské částice, pohyb opilce z hospody atd.).
+    V dalších cvičeních si ukážeme, jak se pomocí náhodné procházky dá jednoduše hledat minimum funkcí (a to i funkcí více proměnných). 
+
+    Algoritmus pro náhodnou procházku je následující: v každém časovém kroku uděláme krok v $d$-rozměrném prostoru $\vector{y}_{i}\rightarrow\vector{y}_{i+1}$ takovým způsobem, aby pravděpodobnost pohybu do všech směrů byla stejná.
+    Délka kroku $l$ se volí buď náhodná, nebo konstantní.
+
+    \begin{task}
+        Naprogramujte náhodnou procházku ve 2D rovině.
+        Délku kroku volte konstantní, například $l=1$, směr volte náhodně.
+        Začněte například z bodu $(0;0)$ a procházku ukončete po $N$ krocích.
+        Případně ji můžete ukončit poté, co se dostanete z předem zadané oblasti, například čtverce o hraně délky $100$.
+        Uchovávejte celou procházku v poli či seznamu. 
+        Nakonec trajektorii vykreslete do grafu.
+    \end{task}
+
+    \begin{task}
+        Zamyslete se nad tím, jak byste realizovali náhodnou procházku s konstantní délkou kroku v $d>2$ rozměrech.
+        Důležité je dodržet požadavek, aby pohyb do jakéhokoliv směru nastával se stejnou pravděpodobností (esence úlohy tedy spočívá v generování náhodného směru v $d$-rozměrném prostoru).
+    \end{task}
 
 \end{document}
