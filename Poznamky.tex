@@ -8,7 +8,8 @@
 \usepackage{indentfirst}
 \usepackage{fancyhdr}
 \usepackage{xifthen}
-\usepackage{amsthm}
+\usepackage{amsthm,thmtools}
+\usepackage{bold-extra}
 
 \hypersetup{
 	pdftitle={Využití počítačů ve fyzice},
@@ -30,21 +31,37 @@
 
 \pagestyle{fancy}
 
+\DeclareMathOperator{\e}{e}
+
 \def\vector#1{\boldsymbol{#1}}								% Vector
 \renewcommand{\d}{\mathrm{d}}
 \newcommand{\derivative}[3][]{\ifthenelse{\isempty{#1}}	    % Normal derivative
 	{\frac{\d{#2}}{\d{#3}}}
 	{\frac{\d^{#1}{#2}}{\d{#3}^{#1}}}
 }
-%\def\example{\textbf{\textit{Příklad:}}}
-%\def\example{\subsubsection*{Příklad:}}
 \def\makematrix#1{\begin{pmatrix}#1\end{pmatrix}}       % Matrix
 
-%\theoremstyle{definition}
+\def\code#1{\textnormal{\texttt{#1}}}
+\def\file#1{\textnormal{\textbf{\texttt{#1}}}}
+
+\newtheoremstyle{spaced}
+{5pt}{5pt}{\itshape}{}{\bfseries}{:}{.5em}{}
+
+\newtheoremstyle{red}
+{5pt}{5pt}{\itshape\color{red}}{}{\bfseries\color{red}}{:}{.5em}{}
+
+\newtheoremstyle{blue}
+{5pt}{5pt}{\itshape\color{blue}}{}{\bfseries\color{blue}}{:}{.5em}{}
 
 \begin{document}
+\theoremstyle{spaced}
 \newtheorem{example}{Příklad}[section]
+
+\theoremstyle{red}
 \newtheorem{task}{Úkol}[section]
+
+\theoremstyle{blue}
+\newtheorem{solution}{Řešení}[section]
 
 \title{Zápisky k předmětu Využití počítačů ve fyzice}
 \date{\today}
@@ -92,6 +109,13 @@
         y'''+yy''-y'^{2}+1=0.
     \end{equation}
 \end{task}
+
+\begin{solution}
+    Hledaná soustava diferenciálních rovnic je
+    \begin{equation}
+        \derivative{}{t}\makematrix{y \\ v \\ a}=\makematrix{v \\ a \\ -ya+v^{2}-1}.
+    \end{equation}
+\end{solution}
 
 \subsection{Diferenciální rovnice prvního řádu}
     Drtivá většina knihoven a algoritmů pro integraci diferenciálních rovnic počítá s rovnicemi ve tvaru~\eqref{eq:ODR}.
@@ -190,7 +214,7 @@
             \item Jedna z nejčastěji používaných metod.
             \item Vysoká rychlost a přesnost při relativní jednoduchosti.
             \item Existují i Runge-Kuttovy metody vyššího řádu $p$, avšak vyžadují výpočet více než $p$ dílčích derivací $k_{j}$.
-            Obecně platí, že metoda řádu $p\leq4$ vyžaduje $p$ derivací, metoda řádu $5\leq<p\leq7$ vyžaduje $p+1$ derivací a metoda řádu $p=8,9$ vyřaduje $p+2$ derivací.
+            Obecně platí, že metoda řádu $p\leq4$ vyžaduje $p$ derivací, metoda řádu $5\leq p\leq7$ vyžaduje $p+1$ derivací a metoda řádu $p=8,9$ vyřaduje $p+2$ derivací.
         \end{itemize}
 
     \subsection{Verletova metoda}\label{sec:Verlet}
@@ -214,29 +238,120 @@
 
     \begin{task}
         Naprogramujte Eulerovu metodu 1. a 2. řádu\footnote{Tyto metody jsme již naprogramovali na cvičení minulý týden.}, Runge-Kuttovu metodu a Verletovu metodu a vyřešte diferenciální rovnici harmonického oscilátoru
-        \begin{equation}
+        \begin{equation}\label{eq:HO}
             \derivative[2]{y}{t}=-y
         \end{equation}
-        s počátečními podmínkami $y_{0}=0$, $y'_{0}\equiv v_{0}=1$ (funkce $\sin t$).
+        s počátečními podmínkami $y_{0}=0$, $y'_{0}\equiv v_{0}=1$ (analytickým řešením je funkce $\sin t$).
         Časový krok ponechte jako volný parametr.
         Nakreslete grafy řešení $y(t)$ a grafy energie $E(t)$ pro rozdílné hodnoty integračních kroků, například $\Delta t=0.01$ a $\Delta t=0.1$ pro čas $t\in\langle0;30\rangle$.
         Energie harmonického oscilátoru je dána vzorcem
-        \begin{equation}
+        \begin{equation}\label{eq:HOE}
             E=\frac{1}{2}\left(y^{2}+v^{2}\right).
         \end{equation}
         Přesvědčte se, že jediná Verletova metoda skutečně zachovává energii. 
         Pro ostatní metody energie roste.
     \end{task}
 
+    \begin{solution}
+        Jedno možné řešení je rozděleno do dvou souborů \file{ODE.py} a \file{Oscillator.py}, které můžete stáhnout z GitHubu \textnormal{\url{https://www.github.com/PavelStransky/PCInPhysics}}  (o GitHubu bude pojednáno v sekci~\ref{sec:github}). 
+
+        \begin{itemize}
+        \item \file{ODE.py}: 
+            Modul napsaný dostatečně obecně, aby ho bylo možné použít na řešení libovolných soustav diferenciálních rovnic.
+            \begin{itemize}
+            \item \code{StepEuler1}: 
+                Integrační krok Eulerovy metody 1. řádu.
+            \item \code{StepEuler2}: 
+                Integrační krok Eulerovy metody 2. řádu.
+            \item \code{StepVerlet}: 
+                Integrační krok Verletovy metody.
+            \item \code{StepRungeKutta}: 
+                Integrační krok Runge-Kuttovy metody 4. řádu.
+            \item \code{ODESolution}: 
+                Integruje diferenciální rovnici danou pravými stranami prvního parametru \code{Derivatives} pomocí kroku (metody) dané parametrem \code{Step} a délkou \code{dt}, přičemž vrátí pole hodnot řešení soustavy rovnic v jednotlivých časech, pole časů a jméno integračního kroku (pro snazší pozdější porovnání různých metod).
+            \item \code{ScipyODESolution}: 
+                Integruje diferenciální rovnici pomocí funkce \code{odeint} z knihovny \code{scipy.integrate}. 
+                Pozor, parametr \code{dt} zde neznamená integrační krok, nýbrž časový krok výsledného pole.
+                Funkce \code{odeint} používá sofistikovaný řešitel diferenciálních rovnic s proměnným krokem.
+                Pro více detailů můžete mrknout na dokumentaci k této funkci na \textnormal{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html}}. 
+            \item \code{ShowGraphSolutions}:
+                Vykreslí graf řešení diferenciální rovnice (jako první parametr \code{odeSolutions} lze zadat seznam více řešení různými metodami či s různým krokem).
+                Parametr \code{ExactFunction} je odkaz na přesné řešení dané diferenciální rovnice. 
+                Je-li specifikován, vykreslí se do grafu dva panely: jeden s hodnotami numerického řešení, druhý s rozdílem řešení numerického a přesného.                 
+            \end{itemize}
+            Funkce \code{StepEuler1}, \code{StepEuler2} a \code{StepRungeKutta} fungují pro obecnou soustavu $n$ o\-by\-čej\-ných diferenciálních rovnic prvního řádu.
+            Funkce \code{StepVerlet} funguje jen pro pohybovou rovnici, tj. pro jednu diferencální rovnici původně druhého řádu.
+
+        \item \file{Oscillator.py}:
+            Soubor, který využívá obecných funkcí z modulu \file{ODE.py} pro integraci harmonického oscilátoru různými metodami.
+            \begin{itemize}
+            \item \code{Energy}:
+                Pro zadanou polohu a rychlost vrátí energii harmonického oscilátoru.
+            \item \code{Derivatives}:
+                Pravá strana soustavy diferenciálních rovnic harmonického oscilátoru. 
+            \item \code{CompareMethods}:
+                Vyřeší diferenciální rovnici harmonického oscilátoru různými metodami a řešení nakreslí do jednoho grafu.
+                Následně vykreslí grafy $E(t)$.
+                Harmonický oscilátor je konzervativní systém (zachovává energii), rostoucí energie je způsobena ne\-přes\-nos\-tí integrační metody.
+            \end{itemize}
+        \end{itemize}
+
+        \begin{figure}[!htbp]\label{fig:HO}
+            \centering
+			\subfigure{\epsfig{file=oscillator.eps,width=0.49\linewidth,keepaspectratio}}
+			\subfigure{\epsfig{file=oscillator2.eps,width=0.49\linewidth,keepaspectratio}}\\
+			\subfigure{\epsfig{file=oscillator_energy.eps,width=0.49\linewidth,keepaspectratio}}
+			\subfigure{\epsfig{file=oscillator_energy2.eps,width=0.49\linewidth,keepaspectratio}}\\
+			\caption{
+                \protect\small
+                Integrace diferenciální rovnice harmonického oscilátoru~\eqref{eq:HO} různými metodami.
+                Časový krok je $\Delta t=0.1$.
+                \emph{Levý sloupec:} všechny metody.
+                \emph{Pravý sloupec:} bez Eulerovy metody 1. řádu.
+                \emph{1.~řádek:} hodnoty $y(t)$.
+                \emph{2.~řádek:} rozdíly $\delta y(t)=y(t)-\sin{t}$.
+                Pro Eulerovu metodu 1. řádu je divergence numerického od analytického řešení očividně exponenciální v čase.
+                \emph{3.~řádek:} energie~\eqref{eq:HOE}. 
+                Pro Eulerovy metody energie roste.
+                Energie roste i pro Runge-Kuttovu metodu a pro integraci pomocí funkce \code{odeint}, avšak růst je řádově menší, tudíž není na grafech při daném měřítku svislé osy vidět.
+                Naopak pro Verletův algoritmus a pro \uv{předbíhající} Eulerovu metodu energie osciluje okolo počáteční energie $E=\frac{1}{2}$.
+			}	
+		\end{figure}
+
+        Příslušné grafy jsou zobrazeny v obrázku~\ref{fig:HO}.
+    \end{solution}
+
     \begin{task}
-        Rozšiřte kód tak, aby počítal kumulovanou kvadratickou chybu
-        \begin{equation}
-            \mathcal{E}=\sqrt{\sum_{i}\left(y_{i}-\sin t_{i}\right)^{2}}
+        Rozšiřte kód tak, aby počítal průměrnou kumulovanou chybu
+        \begin{equation}\label{eq:HOError}
+            \mathcal{E}=\sqrt{\frac{1}{n}\sum_{i=0}^{n-1}\left(y_{i}-\sin t_{i}\right)^{2}}
         \end{equation}
         a nakreslete závislost $E(\Delta t)$ pro $\Delta t\in\langle0.002;0.1\rangle$ a pro různé metody.
         Jelikož očekáváme mocninnou závislost dle~\eqref{eq:MethodOrder}, kde exponent je tím větší, čím větší je řád metody, je výhodné graf $E(\Delta t)$ kreslit v log-log měřítku.
         V Pythonu použijete místo \textnormal{\texttt{plot(...)}} funkci \textnormal{\texttt{loglog(...)}} z knihovny \textnormal{\texttt{matplotlib.pyplot}}.
     \end{task}
+
+    \begin{solution}
+        Průměrnou kumulovanou chybu počítá funkce \code{CumulativeError} z modulu \file{ODE.py}.
+        Srovnání řešení diferenciální rovnice harmonického oscilátoru různými integračními metodami zakresluje do grafu funkce \code{ShowGraphCumulativeErrors} ze souboru \file{Oscillator.py}.
+        Výsledný graf je znázorněn na obrázku~\ref{fig:HOError}.
+        Vypočítanými křivkami $\ln\mathcal{E}(\ln\Delta t)$ je proložena přímka, jejíž sklon $\alpha$ udává exponent moncinného zákona
+        \begin{equation}
+            \mathcal{E}\propto\left(\Delta t\right)^{\alpha}
+        \end{equation} 
+        (k proložení přímky je využita funkce pro lineární regresi \code{linregress} z knihovny \code{scipy.stats}).
+        Tento exponent výborně odpovídá řádu metody $p$ dle rovnice~\eqref{eq:MethodOrder}.
+
+        \begin{figure}[!htbp]\label{fig:HOError}
+            \centering
+			\epsfig{file=oscillator_error.eps,width=0.8\linewidth,keepaspectratio}
+			\caption{
+                \protect\small
+                Závislost průměrné kumulované chyby~\eqref{eq:HOError} na délce kroku $\Delta t$ vypočítaná a vykreslená pomocí funkce \code{ShowGraphCumulativeErrors} pro harmonický oscilátor (soubor \file{Oscillator.py}).
+                Křivka pro Verletovu metodu je \uv{schovaná} za křivkou pro předbíhající Eulerovu metodu.
+			}	
+		\end{figure}
+    \end{solution}
 
     \begin{task}
         Eulerovu metodu 1. řádu lze pro harmonický oscilátor vylepšit následující záměnou:
@@ -256,12 +371,97 @@
         Využijte srovnání v grafu z předchozí úlohy.
     \end{task}
 
+    \begin{solution}
+        Tato metoda je naimplementována v modulu \file{ODE.py} funkcemi \code{StepEuler1AdvancedY} a \code{StepEuler1AdvancedV}.
+        Ze srovnání s ostatními metodami zobrazené v obrázcích~\ref{fig:HO} a~\ref{fig:HOError} vyplývá, že tato metoda je
+        \begin{itemize}
+        \item symplektická (energie sice osciluje a osciluje s větší amplitudou než pro Verletovu metodu, ale pořád osciluje okolo počáteční hodnoty),
+        \item 2. řádu.
+        \end{itemize}
+        V obrázcích jsou výsledky pouze pro metodu předbíhající v souřadnici. 
+        Díky symetrii jsou výsledky pro metodu předbíhající v rychlosti identické.
+    \end{solution}
+
     \begin{task}
         Využijte hotové kódy a pohrajte si s řešením rovnice pro klesající exponenciálu
-        \begin{equation}
+        \begin{equation}\label{eq:Exp}
             \derivative[2]{y}{t}=y
         \end{equation}
         s počátečními podmínkami $y_{0}=1$, $y'_{0}=-1$.
         Přesvědčte se, že Verletova metoda a vylepšená Eulerova metoda z posledního bodu jsou nestabilní --- pro tuto rovnici v relativně krátkém čase začnou řešení exponenciálně divergovat.
     \end{task}
+
+    \begin{solution}
+        Řešení analogické k příkladu harmonického oscilátoru je v souboru \file{Exp.py}.
+        Tento systém není konzervativní --- nelze nadefinovat zachovávající se veličinu, která by měla význam energie.
+
+        \begin{figure}[!htbp]\label{fig:Exp}
+            \centering
+			\epsfig{file=exp.eps,width=0.8\linewidth,keepaspectratio}
+			\caption{
+                \protect\small
+                Totéž jako v obrázku~\ref{fig:HO}, avšak pro exponenciálně klesající systém daný rovnicí~\eqref{eq:Exp}.
+                Symplektické algoritmy jsou nestabilní.
+                }	
+        \end{figure}
+        
+        \begin{figure}[!htbp]\label{fig:ExpError}
+            \centering
+			\epsfig{file=exp_error.eps,width=0.8\linewidth,keepaspectratio}
+			\caption{
+                \protect\small
+                Totéž jako v obrázku~\ref{fig:HOError}, avšak pro exponenciálně klesající systém daný rovnicí~\eqref{eq:Exp}.
+                Pro symplektické algoritmy uvedený graf nedává příliš smysl, jelikož chyba je o řády vyšší než hledané řešení.
+                Přesto stojí za povšimnutí, že předbíhající Eulerův algoritmus, který výborně funguje pro harmonický oscilátor a je pro něj metodou 2. řádu, se zde chová jako metoda 1. řádu.
+			}	
+        \end{figure}
+
+        Z obrázku~\ref{fig:Exp} je vidět, že symplektické algoritmy jsou zde nestabilní, a tudíž nejsou na tento typ úlohy vhodné, což je pochopitelné, protože symplektické algoritmy jsou navrženy pouze pro energii zachovávající systémy.
+        Obecné řešení rovnice~\eqref{eq:Exp} má tvar
+        \begin{equation}
+            y(t)=A\e^{t}+B\e^{-t},
+        \end{equation}
+        přičemž my speciálními počátečními podmínkami vybíráme pouze exponenciálně klesající řešení.
+        Symplektické algoritmy v určitou chvíli \uv{překmitnou} na exponenciálně rostoucí řešení a začnou divergovat.
+
+        Průměrná kumulovaná chyba je znázorněna na obrázku~\ref{fig:ExpError}. 
+    \end{solution}
+
+    \subsection{Shrnutí}
+    \begin{itemize}
+    \item 
+        Řešitelé obyčejných diferenciálních rovnic převážně pracují se soustavami diferenciálních rovnic prvního řádu.
+        Na tento tvar není obtížné diferenciální rovnici vyššího řádu převést.
+
+    \item
+        Nejčastěji se používají jednokrokové metody, jejichž hlavní výhoda je v možnosti jednoduše měnit délku kroku.
+
+    \item 
+        Přesnost řešení závisí na řádu metody $p$ a na délce integračního kroku $\Delta t$.
+        Čím je řád metody vyšší, tím rychleji klesá chyba se zmenšujícícm se krokem.
+        V praxi, pokud nechcete svěřit svůj probém černé skříňce ve formě nějaké hotové knihovny, se velmi často používá Runge-Kuttova metoda 4. řádu, která je jednoduchá na implementaci, je stabilní a rychlá.
+
+    \item
+        Symplektické metody, z nichž nejběžnější je Verletova metoda, jsou výhodné k modelování fyzikálních systémů zachovávajících energii.
+        Pro nekonzervativní systémy nejsou vhodné. 
+
+    \item
+        V Pythonu se procvičilo:
+        \begin{itemize}
+        \item
+            předávání odkazů na funkce v argumentu,
+
+        \item
+            vracení více hodnot z funkce a jejich následné zpracování,
+
+        \item
+            vykreslování grafů a práce s více panely pomocí funkce \code{subplot}; argument této funkce přijímá trojciferné číslo, ve kterém první cifra udává počet panelů v řádcích, druhá cifra počet panelů ve sloupcích a třetí cifra pořadové číslo vykreslovaného panelu,
+
+        \item
+            funkce \code{lineregression} z knihovny \code{scipy.stats} pro výpočet lineární regrese.
+        \end{itemize}
+
+    \end{itemize}
+    A nyní již umíte vypočítat a nakreslit průběh funkce sinus :-)
+
 \end{document}
