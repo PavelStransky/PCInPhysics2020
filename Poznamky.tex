@@ -70,8 +70,7 @@
 \maketitle
 
 \section{Obyčejné diferenciální rovnice}
-    Každou obyčejnou diferenciální rovnici $n$-tého řádu lineární v nejvyšší derivaci lze převést na soustavu
-    $n$ obyčejných diferenciálních rovnic prvního řádu ve tvaru
+    Každou obyčejnou diferenciální rovnici $n$-tého řádu lineární v nejvyšší derivaci lze převést na~soustavu $n$ obyčejných diferenciálních rovnic prvního řádu ve tvaru
     \begin{equation}\label{eq:ODR}
         \derivative{\vector{x}}{t}=\vector{f}(\vector{x},t),
     \end{equation}
@@ -82,8 +81,7 @@
     \begin{equation}
         Ma=F(y),
     \end{equation}
-    kde $M$ je hmotnost pohybujícího se tělesa, $y=y(t)$ jeho poloha a $a=a(t)=\d^{2}y/\d t^{2}$ převedeme
-    na dvě diferenciální rovnice prvního řádu triviálním zavedením rychlosti $v=v(t)=\d y/\d t$:
+    kde $M$ je hmotnost pohybujícího se tělesa, $y=y(t)$ jeho poloha a $a=a(t)=\d^{2}y/\d t^{2}$ převedeme na~dvě diferenciální rovnice prvního řádu triviálním zavedením rychlosti $v=v(t)=\d y/\d t$:
     \begin{equation}
         \derivative{}{t}\makematrix{y \\ v}=\makematrix{v \\ \frac{1}{M}F(y)},
     \end{equation}
@@ -118,7 +116,7 @@
 \end{solution}
 
 \subsection{Diferenciální rovnice prvního řádu}
-    Drtivá většina knihoven a algoritmů pro integraci diferenciálních rovnic počítá s rovnicemi ve tvaru~\eqref{eq:ODR}.
+    Drtivá většina knihoven a algoritmů pro integraci diferenciálních rovnic počítá s rovnicemi ve~tvaru~\eqref{eq:ODR}.
     Zde se omezíme na jednu rovnici
     \begin{equation}
         \derivative{y}{t}=f(y,t),
@@ -159,17 +157,17 @@
         \item {\bf Řád metody:} 
         Metoda je $p$-tého řádu, pokud
         \begin{equation}\label{eq:MethodOrder}
-            L(\Delta t)=\mathcal{O}(\Delta t^{p+1})
+            L(\Delta t)=\mathcal{O}(\Delta t^{p+1}).
         \end{equation}
 
         \item {\bf Symplektické algoritmy:}
-        Speciální algoritmy navržené pro řešení pohybových diferenciálních rovnic.
-        Od běžných algoritmů je odlišuje to, že zachovávají objem fázového prostoru, a tedy i energii (zatímco u obecných algoritmů energie s integračním časem roste).
-        V praxi se ze symplektických algoritmů používá pouze Verletův algoritmus~\ref{sec:Verlet}.
+        Speciální algoritmy navržené pro řešení pohybových di\-fe\-ren\-ci\-ál\-ních rovnic.
+        Od běžných algoritmů je odlišuje to, že zachovávají objem fázového prostoru, a~tedy i energii (zatímco u obecných algoritmů energie s integračním časem roste).
+        V praxi se ze~symplektických algoritmů používá pouze Verletův algoritmus~\ref{sec:Verlet}.
 
         \item {\bf Kontrola chyby řešení:}
-        Chybu numerického řešení diferenciální rovnice lze zmenšit 1) menším krokem, 2) lepší metodou (metodou vyššího řádu). 
-        Menší krok však znamená vyšší výpočetní čas.
+        Chybu numerického řešení diferenciální rovnice lze zmenšit 1)~men\-ším krokem, 2)~lepší metodou (metodou vyššího řádu). 
+        Menší krok však znamená vyšší vý\-po\-čet\-ní čas.
         Sofistikované metody proto průběžně mění velikost kroku: když se funkce mění pomalu, krok prodlouží, když se mění rychle, krok zkrátí (tzv. {\bf metody s adaptivním krokem}).
         Tím se docílí vysoké přesnosti při co nejmenším výpočetním čase.
 
@@ -194,7 +192,7 @@
         \end{align}
         tj. uděláme jednoduchý Eulerův krok ve směru $k_{1}$, spočítáme derivaci $k_{2}$ po tomto kroku a vyrazíme z bodu $y_{i}$ ve směru, který je průměrem obou směrů (doporučuji si nakreslit obrázek).
 
-        Ekvivalentní je udělat \uv{Eulerův půlkrok} a vyrazit z bodu $y_{i}$ ve směru derivace spočtené po tomto půlkroku:
+        Ekvivalentní je udělat \uv{Eulerův půlkrok} a vyrazit z bodu $y_{i}$ ve směru derivace spočtené po~tomto půlkroku:
         \begin{align}\label{eq:Euler2b}
             k'_{1}&=f(y_{i},t_{i})\nonumber\\
             k'_{2}&=f\left(y_{i}+k'_{1}\frac{\Delta t}{2},t+\frac{\Delta t}{2}\right)\\
@@ -273,14 +271,15 @@
                 Integruje diferenciální rovnici pomocí funkce \code{odeint} z knihovny \code{scipy.integrate}. 
                 Pozor, parametr \code{dt} zde neznamená integrační krok, nýbrž časový krok výsledného pole.
                 Funkce \code{odeint} používá sofistikovaný řešitel diferenciálních rovnic s proměnným krokem.
-                Pro více detailů můžete mrknout na dokumentaci k této funkci na \textnormal{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html}}. 
+                Pro podrobnosti můžete mrknout na \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html}{dokumentaci} k této funkci.
+
             \item \code{ShowGraphSolutions}:
                 Vykreslí graf řešení diferenciální rovnice (jako první parametr \code{odeSolutions} lze zadat seznam více řešení různými metodami či s různým krokem).
                 Parametr \code{ExactFunction} je odkaz na přesné řešení dané diferenciální rovnice. 
                 Je-li specifikován, vykreslí se do grafu dva panely: jeden s hodnotami numerického řešení, druhý s rozdílem řešení numerického a přesného.                 
             \end{itemize}
             Funkce \code{StepEuler1}, \code{StepEuler2} a \code{StepRungeKutta} fungují pro obecnou soustavu $n$ o\-by\-čej\-ných diferenciálních rovnic prvního řádu.
-            Funkce \code{StepVerlet} funguje jen pro pohybovou rovnici, tj. pro jednu diferencální rovnici původně druhého řádu.
+            Funkce \code{StepVerlet} funguje jen pro pohybovou rovnici, tj. pro jednu diferencální rovnici původně druhého řádu přepsanou na dvě diferenciální rovnice prvního řádu.
 
         \item \file{Oscillator.py}:
             Soubor, který využívá obecných funkcí z modulu \file{ODE.py} pro integraci harmonického oscilátoru různými metodami.
@@ -471,11 +470,11 @@
         Mezi nejrozšířenější systémy patří
         \begin{itemize}
         \item \href{https://github.com}{GitHub}: 
-            Na něm si každý může zdarma zřídit vlastní repozitáře a používat je například k synchronizaci svého projektu mezi různými počítači, pro sdílení vlastních výtvorů s komunitou nebo právě pro spolupráci ve vlastním týmu. 
+            Na něm si každý může zdarma zřídit vlastní repozitáře a používat je například k~synchronizaci svého projektu mezi různými počítači, pro sdílení vlastních výtvorů s komunitou nebo právě pro spolupráci ve vlastním týmu. 
         \item \href{https://gitlab.mff.cuni.cz}{GitLab}: 
             Open source řešení, základní verze rovněž zdarma, k pokročilé verzi má MFF UK licenci.
         \end{itemize}
-        Oba tyto systémy disponují webovým rozhraním, ze kterého lze projekty jednoduše spravovat, a rovněž desktopovými aplikacemi, které umožňují pracovat s lokálními repozitáři pomocí jednoduchého rozhraní.
+        Oba tyto systémy disponují webovým rozhraním, ze kterého lze projekty jednoduše spravovat, a~rovněž desktopovými aplikacemi, které umožňují pracovat s lokálními repozitáři pomocí jednoduchého rozhraní.
         Pro GitHub existuje například \href{https://desktop.github.com}{GitHub Desktop}, ale i spousta dalších.
         Projekty mohou být soukromé (přístup k nim máte pouze vy či ti, kterým pošlete pozvánku) nebo veřejné (přístup má kdokoliv).
 
@@ -531,7 +530,7 @@
             Stáhněte si do svých počítačů (naklonujte si) z GitHubu repozitář s poznámkami k tomuto cvičení.
             V budoucnu si pomocí příkazu \code{git pull} stahujte aktuální verze.
             Můžete si vytvořit pracovní větev poznámek a v ní si s kódy hrát.
-            V hlavní větvi \code{master} se vám uchová originální verze ze vzdáleného repozitáře.
+            V hlavní větvi \code{master} se vám uchová originální verze ze~vzdáleného repozitáře.
         \end{task}
 
         \begin{task}
@@ -584,19 +583,35 @@
         \end{task}
 
 \section{Náhodná procházka}
-    Náhodná procházka je jeden ze základních prostředků, jak simulovat velké množství nejen fyzikálních procesů (například pohyb Brownovské částice, pohyb opilce z hospody atd.).
+    Náhodná procházka je jeden ze základních prostředků, jak simulovat velké množství nejen fyzikálních procesů (například pohyb Brownovské částice, fluktuace akciového trhu, pohyb opilce z~hospody atd.).
     V dalších cvičeních si ukážeme, jak se pomocí náhodné procházky dá jednoduše hledat minimum funkcí (a to i funkcí více proměnných). 
 
-    Algoritmus pro náhodnou procházku je následující: v každém časovém kroku uděláme krok v $d$-rozměrném prostoru $\vector{y}_{i}\rightarrow\vector{y}_{i+1}$ takovým způsobem, aby pravděpodobnost pohybu do všech směrů byla stejná.
+    Algoritmus pro náhodnou procházku je následující: v každém časovém kroku uděláme krok v~$d$-rozměrném prostoru $\vector{y}_{i}\rightarrow\vector{y}_{i+1}$ takovým způsobem, aby pravděpodobnost pohybu do všech směrů byla stejná.
     Délka kroku $l$ se volí buď náhodná, nebo konstantní.
+
+    \subsection{Pseudonáhodná čísla}
+        V Pythonu je spousta funkcí pro generování pseudonáhodných čísel v knihovně \code{random}.
+        Nej\-dů\-le\-ži\-těj\-ší funkce jsou následující:
+        \begin{itemize}
+        \item \code{random()}: \emph{reálné} náhodné číslo $x$ rovnoměrně z intervalu $x\in\langle 0;1)$.
+        \item \code{uniform(a,b)}: \emph{reálné} náhodné číslo $x$ rovnoměrně z intervalu $x\in\langle a;b\rangle$.
+        \item \code{gauss(mu,sigma)}: náhodné číslo z Gaussovského rozdělení se střední hodnotou \code{mu} a smě\-ro\-dat\-nou odchylkou \code{sigma}. 
+        \item \code{randint(a,b)}: \emph{celé} náhodné číslo $d$ z intervalu $a\leq d<b$.
+        \item \code{seed(s)}: nastaví počáteční násadu generátoru podle parametru \code{s} (pro jednu konkrétní násadu bude generátor dávat stejnou sekvenci čísel). 
+        Parametr může být jakéhokoliv typu, tedy číslo, řetězec atd. 
+        Pokud se parametr neuvede, použije se jako násada systémový čas.
+        \item \code{choice(l)}: vybere náhodně element ze seznamu \code{l}.
+        \item \code{shuffle(l)}: promíchá elementy v seznamu \code{l}.
+        \end{itemize}
+        Další informace najdete v~\href{https://docs.python.org/3/library/random.html}{dokumentaci}.
 
     \begin{task}
         Naprogramujte náhodnou procházku ve 2D rovině.
         Délku kroku volte konstantní, například $l=1$, směr volte náhodně.
         Začněte například z bodu $(0;0)$ a procházku ukončete po $N$ krocích.
-        Případně ji můžete ukončit poté, co se dostanete z předem zadané oblasti, například čtverce o hraně délky $100$.
+        Případně ji můžete ukončit poté, co se dostanete z předem zadané oblasti, například ze čtverce o~hraně délky $100$.
         Uchovávejte celou procházku v poli či seznamu. 
-        Nakonec trajektorii vykreslete do grafu.
+        Nakonec trajektorii vykreslete do~grafu.
     \end{task}
 
     \begin{task}
