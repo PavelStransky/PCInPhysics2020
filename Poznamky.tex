@@ -162,7 +162,7 @@
 
         \item {\bf Symplektické algoritmy:}
         Speciální algoritmy navržené pro řešení pohybových di\-fe\-ren\-ci\-ál\-ních rovnic.
-        Od běžných algoritmů je odlišuje to, že zachovávají objem fázového prostoru, a~tedy i energii (zatímco u obecných algoritmů energie s integračním časem roste).
+        Od běžných algoritmů je odlišuje to, že zachovávají objem fázového prostoru, a~tedy i energii (zatímco u obecných algoritmů se energie s integračním časem mění a většinou roste).
         V praxi se ze~symplektických algoritmů používá pouze Verletův algoritmus~\ref{sec:Verlet}.
 
         \item {\bf Kontrola chyby řešení:}
@@ -295,7 +295,7 @@
             \end{itemize}
         \end{itemize}
 
-        \begin{figure}[!htbp]\label{fig:HO}
+        \begin{figure}[!htbp]
             \centering
 			\subfigure{\epsfig{file=oscillator.eps,width=0.49\linewidth,keepaspectratio}}
 			\subfigure{\epsfig{file=oscillator2.eps,width=0.49\linewidth,keepaspectratio}}\\
@@ -312,9 +312,10 @@
                 Pro Eulerovu metodu 1. řádu je divergence numerického od analytického řešení očividně exponenciální v čase.
                 \emph{3.~řádek:} energie~\eqref{eq:HOE}. 
                 Pro Eulerovy metody energie roste.
-                Energie roste i pro Runge-Kuttovu metodu a pro integraci pomocí funkce \code{odeint}, avšak růst je řádově menší, tudíž není na grafech při daném měřítku svislé osy vidět.
+                Energie se mění i pro Runge-Kuttovu metodu (pro tento systém energie s časem klesá) a pro integraci pomocí funkce \code{odeint}, avšak tyto změny jsou řádově menší, a tudíž je není na grafech při daném měřítku svislé osy vidět.
                 Naopak pro Verletův algoritmus a pro \uv{předbíhající} Eulerovu metodu energie osciluje okolo počáteční energie $E=\frac{1}{2}$.
-			}	
+            }	
+            \label{fig:HO}
 		\end{figure}
 
         Příslušné grafy jsou zobrazeny v obrázku~\ref{fig:HO}.
@@ -341,14 +342,15 @@
         (k proložení přímky je využita funkce pro lineární regresi \code{linregress} z knihovny \code{scipy.stats}).
         Tento exponent výborně odpovídá řádu metody $p$ dle rovnice~\eqref{eq:MethodOrder}.
 
-        \begin{figure}[!htbp]\label{fig:HOError}
+        \begin{figure}[!htbp]
             \centering
 			\epsfig{file=oscillator_error.eps,width=0.8\linewidth,keepaspectratio}
 			\caption{
                 \protect\small
                 Závislost průměrné kumulované chyby~\eqref{eq:HOError} na délce kroku $\Delta t$ vypočítaná a vykreslená pomocí funkce \code{ShowGraphCumulativeErrors} pro harmonický oscilátor (soubor \file{Oscillator.py}).
                 Křivka pro Verletovu metodu je \uv{schovaná} za křivkou pro předbíhající Eulerovu metodu.
-			}	
+            }	
+            \label{fig:HOError}
 		\end{figure}
     \end{solution}
 
@@ -394,7 +396,7 @@
         Řešení analogické k příkladu harmonického oscilátoru je v souboru \file{Exp.py}.
         Tento systém není konzervativní --- nelze nadefinovat zachovávající se veličinu, která by měla význam energie.
 
-        \begin{figure}[!htbp]\label{fig:Exp}
+        \begin{figure}[!htbp]
             \centering
 			\epsfig{file=exp.eps,width=0.8\linewidth,keepaspectratio}
 			\caption{
@@ -402,9 +404,10 @@
                 Totéž jako v obrázku~\ref{fig:HO}, avšak pro exponenciálně klesající systém daný rovnicí~\eqref{eq:Exp}.
                 Symplektické algoritmy jsou nestabilní.
                 }	
+            \label{fig:Exp}
         \end{figure}
         
-        \begin{figure}[!htbp]\label{fig:ExpError}
+        \begin{figure}[!htbp]
             \centering
 			\epsfig{file=exp_error.eps,width=0.8\linewidth,keepaspectratio}
 			\caption{
@@ -412,7 +415,8 @@
                 Totéž jako v obrázku~\ref{fig:HOError}, avšak pro exponenciálně klesající systém daný rovnicí~\eqref{eq:Exp}.
                 Pro symplektické algoritmy uvedený graf nedává příliš smysl, jelikož chyba je o řády vyšší než hledané řešení.
                 Přesto stojí za povšimnutí, že předbíhající Eulerův algoritmus, který výborně funguje pro harmonický oscilátor a je pro něj metodou 2. řádu, se zde chová jako metoda 1. řádu.
-			}	
+            }	
+            \label{fig:ExpError}
         \end{figure}
 
         Z obrázku~\ref{fig:Exp} je vidět, že symplektické algoritmy jsou zde nestabilní, a tudíž nejsou na tento typ úlohy vhodné, což je pochopitelné, protože symplektické algoritmy jsou navrženy pouze pro energii zachovávající systémy.
