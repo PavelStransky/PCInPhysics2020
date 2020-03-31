@@ -10,6 +10,7 @@
 \usepackage{xifthen}
 \usepackage{amsthm,thmtools}
 \usepackage{bold-extra}
+\usepackage[dvipsnames]{xcolor}
 
 \hypersetup{
 	pdftitle={Využití počítačů ve fyzice},
@@ -40,9 +41,11 @@
 	{\frac{\d^{#1}{#2}}{\d{#3}^{#1}}}
 }
 \def\makematrix#1{\begin{pmatrix}#1\end{pmatrix}}       % Matrix
+\def\abs#1{\left|#1\right|}
 
 \def\code#1{\textnormal{\texttt{#1}}}
 \def\file#1{\textnormal{\textbf{\texttt{#1}}}}
+\long\def\python#1{{\color{ForestGreen}#1}}
 
 \newtheoremstyle{spaced}
 {5pt}{5pt}{\itshape}{}{\bfseries}{:}{.5em}{}
@@ -68,6 +71,7 @@
 \author{Pavel Stránský}
 
 \maketitle
+\tableofcontents
 
 \section{Obyčejné diferenciální rovnice}
     Každou obyčejnou diferenciální rovnici $n$-tého řádu lineární v nejvyšší derivaci lze převést na~soustavu $n$ obyčejných diferenciálních rovnic prvního řádu ve tvaru
@@ -449,7 +453,7 @@
         Pro nekonzervativní systémy nejsou vhodné. 
 
     \item
-        V Pythonu se procvičilo:
+        \python{V Pythonu se procvičilo:
         \begin{itemize}
         \item
             předávání odkazů na funkce v argumentu,
@@ -463,7 +467,7 @@
         \item
             funkce \code{lineregression} z knihovny \code{scipy.stats} pro výpočet lineární regrese.
         \end{itemize}
-
+        }
     \end{itemize}
     A nyní již umíte vypočítat a nakreslit průběh funkce sinus :-)
 
@@ -594,20 +598,36 @@
     Délka kroku $l$ se volí buď náhodná, nebo konstantní.
 
     \subsection{Pseudonáhodná čísla}
-        V Pythonu je spousta funkcí pro generování pseudonáhodných čísel v knihovně \code{random}.
-        Nej\-dů\-le\-ži\-těj\-ší funkce jsou následující:
+    \python{
+        V Pythonu lze pseudonáhodná čísla generovat pomocí několika knihoven.
         \begin{itemize}
-        \item \code{random()}: \emph{reálné} náhodné číslo $x$ rovnoměrně z intervalu $x\in\langle 0;1)$.
-        \item \code{uniform(a,b)}: \emph{reálné} náhodné číslo $x$ rovnoměrně z intervalu $x\in\langle a;b\rangle$.
-        \item \code{gauss(mu,sigma)}: náhodné číslo z Gaussovského rozdělení se střední hodnotou \code{mu} a smě\-ro\-dat\-nou odchylkou \code{sigma}. 
-        \item \code{randint(a,b)}: \emph{celé} náhodné číslo $d$ z intervalu $a\leq d<b$.
-        \item \code{seed(s)}: nastaví počáteční násadu generátoru podle parametru \code{s} (pro jednu konkrétní násadu bude generátor dávat stejnou sekvenci čísel). 
-        Parametr může být jakéhokoliv typu, tedy číslo, řetězec atd. 
-        Pokud se parametr neuvede, použije se jako násada systémový čas.
-        \item \code{choice(l)}: vybere náhodně element ze seznamu \code{l}.
-        \item \code{shuffle(l)}: promíchá elementy v seznamu \code{l}.
+            \item 
+                Pro základní použití se používá knihovna \file{random} (\href{https://docs.python.org/3/library/random.html}{dokumentace}).
+                Z ní nejdůležitější funkce jsou tyto:
+                \begin{itemize}
+                    \item \code{random()}: \emph{reálné} pseudonáhodné číslo $x$ rovnoměrně z intervalu $x\in\langle 0;1)$.
+                    \item \code{uniform(a,b)}: \emph{reálné} pseudonáhodné číslo $x$ rovnoměrně z intervalu $x\in\langle a;b\rangle$.
+                    \item \code{gauss(mu,sigma)}: pseudonáhodné číslo z Gaussovského rozdělení se střední hodnotou \code{mu} a smě\-ro\-dat\-nou odchylkou \code{sigma}. 
+                    \item \code{randint(a,b)}: \emph{celé} pseudonáhodné číslo $d$ z intervalu $a\leq d<b$.
+                    \item \code{seed(s)}: nastaví počáteční násadu generátoru podle parametru \code{s} (pro jednu konkrétní násadu bude generátor dávat stejnou sekvenci čísel). 
+                    Parametr může být jakéhokoliv typu, tedy číslo, řetězec atd. 
+                    Pokud se parametr neuvede, použije se jako násada systémový čas.
+                    \item \code{choice(l)}: vybere pseudonáhodně element ze seznamu \code{l}.
+                    \item \code{shuffle(l)}: promíchá elementy v seznamu \code{l}.
+                \end{itemize}
+
+            \item 
+                Pro pokročilejší použití je výhodnější modul \file{numpy.random} (\href{https://docs.python.org/3/library/random.html}{dokumentace}).
+                Ta umožňuje zvolit vlastní generátor pseudonáhodných čísel, generovat čísla z celé řady \href{https://numpy.org/doc/1.18/reference/random/generator.html}{statistických rozdělení} a generovat naráz celé vektory či matice.
+                \begin{itemize}
+                    \item \code{generator = default\_rng()}: Inicializuje standardní generátor pseudonáhodných čísel.
+                    \item \code{generator = Generator(PCG64())}: Inicializuje specifický generátor pseudonáhodných čísel (v~tomto případě PCG-64, což je O'Neillův permutační kongruenční generátor).
+                    \item \code{generator.random(size=10)}: vektor délky 10 s elementy z rovnoměrného rozdělení z intervalu $\langle 0;1)$.
+                    \item \code{generator.normal(size=10)}: vektor délky 10 s elementy z normálního Gaussova roz\-dě\-le\-ní se střední hodnotou $0$ a směrodatnou odchylkou $1$.
+                    \item \code{generator.normal(loc=1, scale=2, size=(10,10))}: matice rozměru $10\times10$ s elementy z normálního Gaussova rozdělení se střední hodnotou $1$ a směrodatnou odchylkou $2$.
+                \end{itemize} 
         \end{itemize}
-        Další informace najdete v~\href{https://docs.python.org/3/library/random.html}{dokumentaci}.
+    }
 
     \begin{task}
         Naprogramujte náhodnou procházku ve 2D rovině.
@@ -618,9 +638,204 @@
         Nakonec trajektorii vykreslete do~grafu.
     \end{task}
 
+    \begin{solution}
+        Řešení je naimplementováno v souboru \file{RandomWalk2D.py}.
+        \begin{itemize}
+            \item \code{RandomDirection2D} vrátí náhodný směr ve 2D rovině [generuje náhodný úhel $\phi$, směr je dán jednotkovým vektorem se složkami $(\cos\phi,\sin\phi)$].
+            \item \code{RandomWalk2D} vykreslí do grafu náhodnou procházku s \code{numSteps} kroky omezenou ve čtverci rozměru $2\,$\code{boxSize}$\times2\,$\code{boxSize} a náhodnou procházku vrátí.
+            \item \code{RandomWalk2DInteractive} generuje náhodnou procházku a vykresluje ji do grafu krok po kroku.
+                Musí být zapnutý interaktivní mód vykreslování \code{plt.ion()} a v prostředí Spyder vypnuto použítí inline grafů příkazem \code{\%matplotlib auto} v konzoli REPL.
+        \end{itemize}
+        Vzorový kód je napsán takovým způsobem, aby mohl být přímočaře rozšířen pro vícerozměrnou náhodnou procházku.
+        Důležité body kódu jsou tyto:
+        \python{
+            \begin{itemize}
+                \item Cyklus \code{for} v Pythonu prochází jakýkoliv objekt nazvaný {\bf iterátor}.
+                    Už jsme se seznámili s cyklem přes prvky seznamu, pole či řádky textového souboru.
+                    Pokud chceme jednoduchý cyklus přes po sobě jdoucí celá čísla, použijeme iterátor \code{range(start,stop[,step])} (iteruje se přes celá čísla počínající \code{start} a končící posledním číslem ostře menším než \code{stop}).
+                \item \code{numpy.allclose(a,b)} porovnává prvek po prvku řad \code{a} a \code{b} a pokud jsou všechny prvky blízko sebe v rámci zadané tolerance, vrátí \code{True}.
+                    Konečná tolerance je důležitá proto, aby byly ošetřeny případy, kdy důsledkem konečné strojové přesnosti některá fakticky stejná čísla běžné porovnání vyhodnotí jako rozdílná, například \code{x = 101*0.1} a \code{y = 10.1}.  
+                    Toleranci pro porovnávání lze \href{https://numpy.org/doc/1.18/reference/generated/numpy.allclose.html}{nastavit}. 
+
+                    Pro porovnání jednotlivých čísel v mezích tolerance slouží funkce \code{numpy.isclose(x,y)}.
+
+                \item Operátor \code{\%}: zbytek po dělení.
+                \item Rozmyslete si dobře podmínku, která zjišťuje, zda jsme uvnitř omezujícího čtverce.
+                    Podmínka by dobře posloužila i v případě, kdybychom chtěli implementovat cyklické okrajové podmínky.
+            \end{itemize}
+        }
+    \end{solution}
+
     \begin{task}
         Zamyslete se nad tím, jak byste realizovali náhodnou procházku s konstantní délkou kroku v $d>2$ rozměrech.
         Důležité je dodržet požadavek, aby pohyb do jakéhokoliv směru nastával se stejnou pravděpodobností (esence úlohy tedy spočívá v generování náhodného směru v $d$-rozměrném prostoru).
     \end{task}
 
+    \begin{solution}
+        Zatímco pro směr ve 2D rovině stačí náhodě generovat jeden úhel (předchozí úloha), vícerozměrné úlohy jsou komplikovanější.
+        Přímé rozšíření 2D případu do 3D (či do vyšších dimenzí) za generování více úhlů a použití (hyper-)sférických souřadnic k cíli nevede --- takto otrocky generované směry upřednostňují okolí pólů před rovníkem (rozmyslete).
+        K úspěšnému generování náhodného kroku je nutné využít jeden z následujících algoritmů:
+        \begin{enumerate}
+            \item Hyperkoule vepsaná v hyperkrychli.
+                \begin{enumerate}
+                    \item Nagenerujeme bod v hyperkrychli o hraně délky $2$, tj. generujeme vektor $\vector{v}$ s $d$ složkami, přičemž každá složka je náhodné číslo z rovnoměrného rozdělení $(-1,1)$.
+                    \item Zkontrolujeme, zda bod leží uvnitř vepsané jednotkové koule například tak, že spočítáme jeho normu $v=\abs{\vector{v}}$ a porovnáme, zda $n\leq1$.
+                    \item Pokud ne, opakujeme postup od začátku.
+                        Pokud ano, nagenerovaný bod promítneme na jednotkovou kouli (jinými slovy vektor $\vector{v}$ nanormujeme) a získaný jednotkový vektor $\vector{\hat{v}}\equiv\vector{v}/v$ udává hledaný směr. 
+                \end{enumerate}
+                Tato metoda je obrovsky neefektivní, pokud je dimenze $d$ vysoká, poněvadž v tom případě většina nagenerovaných bodů leží vně vepsané hyperkoule a je zahozena.
+                Poměr celkového počtu nagenerovaných bodů ku úspěšným zásahům vnitřku hyperkoule lze snadno spočítat.
+                Objem hyperkrychle o hraně délky $2$ je
+                \begin{equation}
+                    V_{d}^{(\text{krychle})}=2^{d},
+                \end{equation}
+                objem vepsané hyperkoule o poloměru $1$ je
+                \begin{equation}
+                    V_{d}^{(\text{koule})}=\frac{\pi^{\frac{d}{2}}}{\Gamma\left(\frac{d}{2}+1\right)},
+                \end{equation}
+                kde $\Gamma$ je Eulerova gama funkce.
+                Vzájemný poměr
+                \begin{equation}
+                    \eta_{d}\equiv\frac{V_{d}^{(\text{krychle})}}{V_{d}^{(\text{koule})}}=\left(\frac{2}{\sqrt{\pi}}\right)^{d}\Gamma\left(\frac{d}{2}+1\right)
+                \end{equation}
+                udává, kolik bodů musíme průměrně nagenerovat, abychom se trefili do hyperkoule (reciproká hodnota $1/\eta_{d}$ určuje pravděpodobnost, že se do hyperkoule trefíme).
+                Zatímco pro $d=3$ je $\eta_{3}\approx1.91$, pro $d=10$ již $\eta_{10}\approx401$, tj. pro nalezení jednoho náhodného směru v desetirozměrném prostoru musíme nagenerovat v průměru přes $4000$ náhodných čísel.
+                Z posledního vztahu je vidět, že s rostoucí dimenzí roste $\eta_{d}$ exponenciálně.
+                
+            \item Náhodný Gaussovský vektor.
+                \begin{enumerate}
+                    \item Nagenerujeme vektor $\vector{n}$ s $d$ složkami, přičemž každá složka je číslo z normálního Gaussovského rozdělení $N(0,1)$.
+                    \item Vektor nanormujeme a získáme hledaný náhodný směr $\vector{\hat{n}}\equiv\vector{n}/n$. 
+                \end{enumerate}
+                Tato metoda je mnohem přímočařejší než předchozí, předpokladem je jen mít k dispozici generátor čísel vybraných z normálního rozdělení.
+
+                Důkaz, že tato metoda dává opravdu náhodný směr v $d$ dimenzích, a další informace o metodě se naleznete v článcích~\cite{Mul59,Mar72}.
+
+            \item Speciální případ $d=3$ (náhodný let).
+                \begin{enumerate}
+                    \item Generujeme dvě náhodná čísla $\xi_{1,2}$ z rovnoměrného rozdělení na intervalu $\langle0;1)$.
+                    \item Sférické úhly jednotkového směru jsou pak
+                        \begin{align}
+                            \phi&=2\pi\xi_{1},\nonumber\\
+                            \theta&=\arccos\left(1-2\xi_{2}\right),
+                        \end{align}
+                        takže hledaný jednotkový vektor $\vector{\hat{n}}$ do náhodného směru má komponenty
+                        \begin{align}
+                            \hat{n}_{x}
+                                &=\sin\theta\cos\phi
+                                =\sqrt{1-\left(1-2\xi_{2}\right)^{2}}\cos2\pi\xi_{1},\nonumber\\
+                            \hat{n}_{y}
+                                &=\sin\theta\sin\phi
+                                =\sqrt{1-\left(1-2\xi_{2}\right)^{2}}\sin2\pi\xi_{1},\\
+                            \hat{n}_{z}
+                                &=\cos\theta
+                                =1-2\xi_{2}.\nonumber
+                        \end{align}
+                        Ve více rozměrech je tento přístup prakticky nerealizovatelný (vede na problém inverzních funkcí k funkcím daným řadou goniometrických funkcí).
+                \end{enumerate}
+            \end{enumerate}
+
+            Náhodná procházka v $d$-rozměrném prostoru je naprogramována v souboru \file{RandomWalk.py}.
+            Funkce \code{RandomDirection} generuje směr pomocí 1. metody, funkce \code{RandomDirectionGaussian} pomocí 2. metody.
+            Zkuste si spočítat náhodnou procházku pro $d=10$ oběma metodami.
+            Uvidíte, že i pro takto relativně \uv{malou} dimenzi je rozdíl ve výpočetních časech je dramatický.
+    \end{solution}
+
+\section{Hledání minima funkce}
+    Náhodnou procházku lze úspěšně použít k hledání minima funkce obecně více proměnných.
+    Představte si funkci dvou proměnných jako zvlněnou \uv{krajinu} v noci.
+    Potřebujete se vrátit k chatě, která se nachází pod vámi hluboko v úkolí.
+    Je tma a nevidíte jakým směrem se vydat.
+    Zkusíte tedy udělat náhodný krok a pokud povede dolů, vykročíte.
+    Pokud by však krok vedl nahoru, zůstanete na místě a zkusíte nový směr.
+
+    \begin{task}
+        Rozšiřte program pro náhodnou procházku tak, aby hledal minimum funkce dvou pro\-měn\-ných $f(x,y)$.
+        Otestujte svůj program pro kvadratickou funkci
+        \begin{equation}
+            f(x,y)=x^{2}+y^{2}
+        \end{equation}
+        a pro \href{https://en.wikipedia.org/wiki/Rosenbrock_function}{Rosenbrockovu funkci}
+        \begin{equation}
+            f(x,y)=(a-x)^{2}+b\left(y-x^{2}\right)^{2}        
+        \end{equation}
+        vypadající jako velmi pozvolna klesající hluboké údolí ve tvaru paraboly.
+        Tato funkce se používá k testování rychlosti a efektivity minimalizačních algoritmů.
+        Její minimum se nachází v bodě $\left(a,a^{2}\right)$ a hodnoty parametrů nejčastěji se volí $a=1,b=100$.   
+        
+        Implementujte vhodným způsobem ukončení náhodné procházky, tj. okamžik, kdy jste již dorazili do minima funkce.
+    \end{task}
+
+    \begin{task}
+        Náhodnou procházku zakreslete jako čáru do grafu společně s konturovým grafem potenciálu.
+        Návod na nakreslení konturového grafu pomocí funkce \code{matplotlib.pyplot.contourf} naleznete
+        v souboru \file{Contourf.py}.
+    \end{task}
+
+    \begin{task}
+        Rozšiřte kód tak, aby počítal i vícerozměrnou náhodnou procházku, a najděte pomocí něho minimum funkce čtyř proměnných
+        \begin{align}
+            f(s,t,u,v)
+                &=\frac{1}{4}\left(s^{2}+t^{2}+u^{2}+v^{2}\right)\nonumber\\
+                &\quad-\frac{1}{2}\left[\left(s^{2}+t^{2}\right)\left(2-s^{2}-t^{2}-u^{2}-v^{2}\right)+\left(su-tv\right)^{2}\right]\\
+                &\quad+\frac{s}{2}\sqrt{2-s^{2}-t^{2}-u^{2}-v^{2}}\nonumber.
+            \end{align}
+    \end{task}
+
+    Jednoduchá náhodná procházka funguje dobře pro funkce s jedním minimem.
+    V obecném případě má však funkce více lokálních minim a právě uvedený algoritmus skončí náhodně v jednom z nich, ze kterého se již nedokáže dostat ven.
+    Při tom rozhodně nemusí jít o minimum nejhlubší (globální).
+    
+    Hledání globálního minima funkce mnoha proměnných je obecně velmi komplexní problém.
+    Dva nejjednodušší postupy, kterými můžeme vylepšit stávající metodu pomocí náhodné procházky, jsou následující:
+    \begin{itemize}
+        \item Provedeme několik náhodných procházek, které obecně dojdou do různých lokálních minim.
+            Následně porovnáme konečné funkční hodnoty a vybereme to minimum, které má hodnotu nejnižší.
+        \item Provedeme jednu náhodnou procházku doplněnou o \emph{Metropolisův algoritmus}. 
+    \end{itemize}
+
+    \subsection{Metropolisův algoritmus}
+        Metropolisův algoritmus rozšiřuje náhodnou procházku o konečnou teplotu.
+        Je inspirován termodynamickým Boltzmannových rozdělením energie: 
+        máme tepelnou energii, díky které můžeme při náhodné procházce s určitou pravděpodobností udělat krok i \uv{do kopce}, avšak čím je kopec strmější, tím bude pravděpodobnost takovéhoto kroku menší.
+        
+        Předpokládejme, že jsme na vrstevnici s funkční hodnotou $f$ a nová funkční hodnota po provedení kroku náhodné procházky by byla $f_{\text{nová}}>f$.
+        Při minimalizaci pomocí obyčejné náhodné procházky bychom tento krok neprovedli.
+        V Metropolisově algoritmu krok provedeme s pravděpodobností
+        \begin{equation}
+            p=\e^{\frac{f-f_{\text{nová}}}{T}},
+        \end{equation}
+        kde $T$ je parametr, který má roli \uv{teploty}: pokud $T=0$, žádný tepelný pohyb neexistuje, krok do kopce nikdy neprovedeme a vracíme se tak k obyčejné minimalizaci.
+        Pokud $T\rightarrow\infty$, uděláme krok do kopce s pravděpodobností $p\rightarrow1$,
+        což znamená, že tepelný pohyb zcela převládá, my se pohybujeme zcela náhodně a potenciál pod sebou vůbec necítíme.
+        
+        V praxi je největší umění zvolit správnou hodnotu teploty.
+        Pokud zvolíme teplotu nízkou, skončíme v lokálním minimu a už se z něj nedostaneme, pokud naopak příliš vysokou, budeme chaoticky procházet krajinou naší funkce a žádné minimum nenajdeme.
+        Dobrá volba je začít spíš s vyšší teplotou a teplotu postupně snižovat.
+        Jakmile se ocitneme zaseklí v nějakém minimu, můžeme teplotu zase trochu zvýšit a tím vyzkoušet, zda se nepřesuneme do nějakého minima hlubšího.
+
+        \begin{task}
+            Naprogramujte Metropolisův algoritmus a odlaďte ho na případu funkce
+            \begin{equation}
+                f(x,y)=x^{4}-2x^{2}+x+y^{2}.
+            \end{equation}
+            Tato funkce má dvě lokální minima (jedná se o vzorovou funkci ze souboru \file{Contourf.py}).
+        \end{task}
+
+        \subsection{Minimalizace pomocí knihovny SciPy}
+        Python obsahuje funkci pro hledání minima \code{minimize} v knihovně \file{scipy.optimize} 
+        (z této knihovny jsme v jednom z prvních cvičení využívali funkci \code{least\_squares} pro hledání optimální hodnoty parametrů funkce fitující zadaná data metodou nejmenších čverců).
+        
+        \begin{task}
+            Prostudujte \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html}{dokumentaci} k funkci \code{minimize} a vytvořte kód, který tuto funkci využije k najití minima všech doposud studovaných funkcí dvou a více proměnných.
+        \end{task}
+
+
+
+\begin{thebibliography}{99}
+    \bibitem{Mul59} M.E. Muller, {\it A note on a method for generating points uniformly on n-dimensional spheres},
+    Communications of the Asociation for Computing Machinery {\bf 2}, 19 (1959).
+    \bibitem{Mar72} G. Marsaglia, {\it Choosing a Point from the Surface of a Sphere},
+    The Annals of Mathematical Statistics {\bf 43}, 645 (1972).
+\end{thebibliography}
 \end{document}
