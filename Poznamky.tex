@@ -1,7 +1,9 @@
 \documentclass[a4paper,11pt,twoside]{article}
-\usepackage[utf8]{inputenc}	%% Text coding
+\usepackage[utf8]{inputenc}	% Text coding
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage[czech]{babel}
-\usepackage{epsfig,subfigure}
+\usepackage{epsfig}
 \usepackage{amsfonts,amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage[unicode]{hyperref}
@@ -11,6 +13,7 @@
 \usepackage{amsthm,thmtools}
 \usepackage{bold-extra}
 \usepackage[dvipsnames]{xcolor}
+\usepackage[subrefformat=simple,labelformat=simple]{subcaption} % Instead of subfigure
 
 \hypersetup{
 	pdftitle={Využití počítačů ve fyzice},
@@ -22,6 +25,10 @@
 	citecolor=green,
 	filecolor=magenta
 }
+
+%\babelhyphenation[czech]{ma-te-ma-tic-kých}
+
+\renewcommand\thesubfigure{(\alph{subfigure})}
 
 % Velikost stránky
 \addtolength{\topmargin}{-1.5cm} %\addtolength{\textheight}{-10cm}
@@ -57,6 +64,7 @@
 {5pt}{5pt}{\itshape\color{blue}}{}{\bfseries\color{blue}}{:}{.5em}{}
 
 \begin{document}
+
 \theoremstyle{spaced}
 \newtheorem{example}{Příklad}[section]
 
@@ -165,13 +173,13 @@
         \end{equation}
 
         \item {\bf Symplektické algoritmy:}
-        Speciální algoritmy navržené pro řešení pohybových di\-fe\-ren\-ci\-ál\-ních rovnic.
+        Speciální algoritmy navržené pro řešení pohybových differenciálních rovnic.
         Od běžných algoritmů je odlišuje to, že zachovávají objem fázového prostoru, a~tedy i energii (zatímco u obecných algoritmů se energie s integračním časem mění a většinou roste).
         V praxi se ze~symplektických algoritmů používá pouze Verletův algoritmus~\ref{sec:Verlet}.
 
         \item {\bf Kontrola chyby řešení:}
-        Chybu numerického řešení diferenciální rovnice lze zmenšit 1)~men\-ším krokem, 2)~lepší metodou (metodou vyššího řádu). 
-        Menší krok však znamená vyšší vý\-po\-čet\-ní čas.
+        Chybu numerického řešení diferenciální rovnice lze zmenšit 1)~menším krokem, 2)~lepší metodou (metodou vyššího řádu). 
+        Menší krok však znamená vyšší výpočetní čas.
         Sofistikované metody proto průběžně mění velikost kroku: když se funkce mění pomalu, krok prodlouží, když se mění rychle, krok zkrátí (tzv. {\bf metody s adaptivním krokem}).
         Tím se docílí vysoké přesnosti při co nejmenším výpočetním čase.
 
@@ -272,7 +280,7 @@
             \item \code{ODESolution}: 
                 Integruje diferenciální rovnici danou pravými stranami prvního parametru \code{Derivatives} pomocí kroku (metody) dané parametrem \code{Step} a délkou \code{dt}, přičemž vrátí pole hodnot řešení soustavy rovnic v jednotlivých časech, pole časů a jméno integračního kroku (pro snazší pozdější porovnání různých metod).
             \item \code{ScipyODESolution}: 
-                Integruje diferenciální rovnici pomocí funkce \code{odeint} z knihovny \code{scipy.integrate}. 
+                Integruje diferenciální rovnici pomocí funkce \code{odeint} z knihovny \code{sci\-py.integrate}. 
                 Pozor, parametr \code{dt} zde neznamená integrační krok, nýbrž časový krok výsledného pole.
                 Funkce \code{odeint} používá sofistikovaný řešitel diferenciálních rovnic s proměnným krokem.
                 Pro podrobnosti můžete mrknout na \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html}{dokumentaci} k této funkci.
@@ -282,7 +290,7 @@
                 Parametr \code{ExactFunction} je odkaz na přesné řešení dané diferenciální rovnice. 
                 Je-li specifikován, vykreslí se do grafu dva panely: jeden s hodnotami numerického řešení, druhý s rozdílem řešení numerického a přesného.                 
             \end{itemize}
-            Funkce \code{StepEuler1}, \code{StepEuler2} a \code{StepRungeKutta} fungují pro obecnou soustavu $n$ o\-by\-čej\-ných diferenciálních rovnic prvního řádu.
+            Funkce \code{StepEuler1}, \code{StepEuler2} a \code{StepRungeKutta} fungují pro obecnou soustavu $n$ obyčejných diferenciálních rovnic prvního řádu.
             Funkce \code{StepVerlet} funguje jen pro pohybovou rovnici, tj. pro jednu diferencální rovnici původně druhého řádu přepsanou na dvě diferenciální rovnice prvního řádu.
 
         \item \file{Oscillator.py}:
@@ -295,16 +303,25 @@
             \item \code{CompareMethods}:
                 Vyřeší diferenciální rovnici harmonického oscilátoru různými metodami a řešení nakreslí do jednoho grafu.
                 Následně vykreslí grafy $E(t)$.
-                Harmonický oscilátor je konzervativní systém (zachovává energii), rostoucí energie je způsobena ne\-přes\-nos\-tí integrační metody.
+                Harmonický oscilátor je konzervativní systém (zachovává energii), rostoucí energie je způsobena nepřesností integrační metody.
             \end{itemize}
         \end{itemize}
 
         \begin{figure}[!htbp]
-            \centering
-			\subfigure{\epsfig{file=oscillator.eps,width=0.49\linewidth,keepaspectratio}}
-			\subfigure{\epsfig{file=oscillator2.eps,width=0.49\linewidth,keepaspectratio}}\\
-			\subfigure{\epsfig{file=oscillator_energy.eps,width=0.49\linewidth,keepaspectratio}}
-			\subfigure{\epsfig{file=oscillator_energy2.eps,width=0.49\linewidth,keepaspectratio}}\\
+            \begin{subfigure}{0.49\linewidth}
+                \centering\epsfig{file=oscillator.eps,width=\linewidth}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}{0.49\linewidth}
+                \centering\epsfig{file=oscillator2.eps,width=\linewidth}
+            \end{subfigure}
+            \begin{subfigure}{0.49\linewidth}
+                \centering\epsfig{file=oscillator_energy.eps,width=\linewidth}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}{0.49\linewidth}
+                \centering\epsfig{file=oscillator_energy2.eps,width=\linewidth}
+            \end{subfigure}
 			\caption{
                 \protect\small
                 Integrace diferenciální rovnice harmonického oscilátoru~\eqref{eq:HO} různými metodami.
@@ -607,7 +624,7 @@
                 \begin{itemize}
                     \item \code{random()}: \emph{reálné} pseudonáhodné číslo $x$ rovnoměrně z intervalu $x\in\langle 0;1)$.
                     \item \code{uniform(a,b)}: \emph{reálné} pseudonáhodné číslo $x$ rovnoměrně z intervalu $x\in\langle a;b\rangle$.
-                    \item \code{gauss(mu,sigma)}: pseudonáhodné číslo z Gaussovského rozdělení se střední hodnotou \code{mu} a smě\-ro\-dat\-nou odchylkou \code{sigma}. 
+                    \item \code{gauss(mu,sigma)}: pseudonáhodné číslo z Gaussovského rozdělení se střední hodnotou \code{mu} a směrodatnou odchylkou \code{sigma}. 
                     \item \code{randint(a,b)}: \emph{celé} pseudonáhodné číslo $d$ z intervalu $a\leq d<b$.
                     \item \code{seed(s)}: nastaví počáteční násadu generátoru podle parametru \code{s} (pro jednu konkrétní násadu bude generátor dávat stejnou sekvenci čísel). 
                     Parametr může být jakéhokoliv typu, tedy číslo, řetězec atd. 
@@ -622,8 +639,8 @@
                 \begin{itemize}
                     \item \code{generator = default\_rng()}: Inicializuje standardní generátor pseudonáhodných čísel.
                     \item \code{generator = Generator(PCG64())}: Inicializuje specifický generátor pseudonáhodných čísel (v~tomto případě PCG-64, což je O'Neillův permutační kongruenční generátor).
-                    \item \code{generator.random(size=10)}: vektor délky 10 s elementy z rovnoměrného rozdělení z intervalu $\langle 0;1)$.
-                    \item \code{generator.normal(size=10)}: vektor délky 10 s elementy z normálního Gaussova roz\-dě\-le\-ní se střední hodnotou $0$ a směrodatnou odchylkou $1$.
+                    \item \code{generator.random(size=10)}: vektor délky 10 s elementy z rovnoměrného rozdělení z~intervalu $\langle 0;1)$.
+                    \item \code{generator.normal(size=10)}: vektor délky 10 s elementy z normálního Gaussova rozdělení se střední hodnotou $0$ a směrodatnou odchylkou $1$.
                     \item \code{generator.normal(loc=1, scale=2, size=(10,10))}: matice rozměru $10\times10$ s elementy z normálního Gaussova rozdělení se střední hodnotou $1$ a směrodatnou odchylkou $2$.
                 \end{itemize} 
         \end{itemize}
@@ -651,7 +668,7 @@
         \python{
             \begin{itemize}
                 \item Cyklus \code{for} v Pythonu prochází jakýkoliv objekt nazvaný {\bf iterátor}.
-                    Už jsme se seznámili s cyklem přes prvky seznamu, pole či řádky textového souboru.
+                    Už jsme se seznámili s~cyklem přes prvky seznamu, pole či řádky textového souboru.
                     Pokud chceme jednoduchý cyklus přes po sobě jdoucí celá čísla, použijeme iterátor \code{range(start,stop[,step])} (iteruje se přes celá čísla počínající \code{start} a končící posledním číslem ostře menším než \code{stop}).
                 \item \code{numpy.allclose(a,b)} porovnává prvek po prvku řad \code{a} a \code{b} a pokud jsou všechny prvky blízko sebe v rámci zadané tolerance, vrátí \code{True}.
                     Konečná tolerance je důležitá proto, aby byly ošetřeny případy, kdy důsledkem konečné strojové přesnosti některá fakticky stejná čísla běžné porovnání vyhodnotí jako rozdílná, například \code{x = 101*0.1} a \code{y = 10.1}.  
@@ -659,7 +676,7 @@
 
                     Pro porovnání jednotlivých čísel v mezích tolerance slouží funkce \code{numpy.isclose(x,y)}.
 
-                \item Operátor \code{\%}: zbytek po dělení.
+                \item Operátor \code{\%}: zbytek po dělení (modulo).
                 \item Rozmyslete si dobře podmínku, která zjišťuje, zda jsme uvnitř omezujícího čtverce.
                     Podmínka by dobře posloužila i v případě, kdybychom chtěli implementovat cyklické okrajové podmínky.
             \end{itemize}
@@ -681,7 +698,7 @@
                     \item Nagenerujeme bod v hyperkrychli o hraně délky $2$, tj. generujeme vektor $\vector{v}$ s $d$ složkami, přičemž každá složka je náhodné číslo z rovnoměrného rozdělení $(-1,1)$.
                     \item Zkontrolujeme, zda bod leží uvnitř vepsané jednotkové koule například tak, že spočítáme jeho normu $v=\abs{\vector{v}}$ a porovnáme, zda $n\leq1$.
                     \item Pokud ne, opakujeme postup od začátku.
-                        Pokud ano, nagenerovaný bod promítneme na jednotkovou kouli (jinými slovy vektor $\vector{v}$ nanormujeme) a získaný jednotkový vektor $\vector{\hat{v}}\equiv\vector{v}/v$ udává hledaný směr. 
+                        Pokud ano, nagenerovaný bod promítneme na~jednotkovou kouli (jinými slovy vektor $\vector{v}$ nanormujeme) a získaný jednotkový vektor $\vector{\hat{v}}\equiv\vector{v}/v$ udává hledaný směr. 
                 \end{enumerate}
                 Tato metoda je obrovsky neefektivní, pokud je dimenze $d$ vysoká, poněvadž v tom případě většina nagenerovaných bodů leží vně vepsané hyperkoule a je zahozena.
                 Poměr celkového počtu nagenerovaných bodů ku úspěšným zásahům vnitřku hyperkoule lze snadno spočítat.
@@ -701,6 +718,8 @@
                 udává, kolik bodů musíme průměrně nagenerovat, abychom se trefili do hyperkoule (reciproká hodnota $1/\eta_{d}$ určuje pravděpodobnost, že se do hyperkoule trefíme).
                 Zatímco pro $d=3$ je $\eta_{3}\approx1.91$, pro $d=10$ již $\eta_{10}\approx401$, tj. pro nalezení jednoho náhodného směru v desetirozměrném prostoru musíme nagenerovat v průměru přes $4000$ náhodných čísel.
                 Z posledního vztahu je vidět, že s rostoucí dimenzí roste $\eta_{d}$ exponenciálně.
+
+                Z tohoto výpočtu také vyplývá, že pokud bychom nezahazovali body ležící mimo hyperkouli, pak bychom ve výsledné procházce výrazně upřednosťnovali pohyb podél diagonál, a to tím více, čím vyšší je dimenzionalita procházky (u $d=10$ bychom podél diagonál vyrazili s více než $99\%$ pravděpodobností).
                 
             \item Náhodný Gaussovský vektor.
                 \begin{enumerate}
@@ -738,7 +757,7 @@
             Náhodná procházka v $d$-rozměrném prostoru je naprogramována v souboru \file{RandomWalk.py}.
             Funkce \code{RandomDirection} generuje směr pomocí 1. metody, funkce \code{RandomDirectionGaussian} pomocí 2. metody.
             Zkuste si spočítat náhodnou procházku pro $d=10$ oběma metodami.
-            Uvidíte, že i pro takto relativně \uv{malou} dimenzi je rozdíl ve výpočetních časech je dramatický.
+            Uvidíte, že i~pro takto relativně \uv{malou} dimenzi je rozdíl ve výpočetních časech je dramatický.
     \end{solution}
 
 \section{Hledání minima funkce}
@@ -750,21 +769,51 @@
     Pokud by však krok vedl nahoru, zůstanete na místě a zkusíte nový směr.
 
     \begin{task}
-        Rozšiřte program pro náhodnou procházku tak, aby hledal minimum funkce dvou pro\-měn\-ných $f(x,y)$.
+        Rozšiřte program pro náhodnou procházku tak, aby hledal minimum funkce dvou proměnných $f(x,y)$.
         Otestujte svůj program pro kvadratickou funkci
-        \begin{equation}
+        \begin{equation}\label{eq:Minimizef}
             f(x,y)=x^{2}+y^{2}
         \end{equation}
         a pro \href{https://en.wikipedia.org/wiki/Rosenbrock_function}{Rosenbrockovu funkci}
-        \begin{equation}
-            f(x,y)=(a-x)^{2}+b\left(y-x^{2}\right)^{2}        
+        \begin{equation}\label{eq:Minimizeg}
+            g(x,y)=(a-x)^{2}+b\left(y-x^{2}\right)^{2}        
         \end{equation}
         vypadající jako velmi pozvolna klesající hluboké údolí ve tvaru paraboly.
-        Tato funkce se používá k testování rychlosti a efektivity minimalizačních algoritmů.
-        Její minimum se nachází v bodě $\left(a,a^{2}\right)$ a hodnoty parametrů nejčastěji se volí $a=1,b=100$.   
+        Tato funkce se používá k~testování rychlosti a efektivity minimalizačních algoritmů.
+        Její minimum se nachází v~bodě $\left(a,a^{2}\right)$ a hodnoty parametrů nejčastěji se volí $a=1,b=100$.   
         
         Implementujte vhodným způsobem ukončení náhodné procházky, tj. okamžik, kdy jste již dorazili do minima funkce.
     \end{task}
+
+    \begin{solution}
+        Vzorový kód je naimplementován v souboru \file{RandomWalkMinimize.py} a vychází z~náhodné vícerozměrné procházky z modulu \file{RandomWalk.py} (z tohoto modulu kód využívá funkci \code{Ran\-domDirectionGaussian}).
+        K minimalizaci jsou v kódu dvě různé metody:
+        \begin{itemize}
+            \item \code{Minimize}: 
+                Hledá minimum funkce \code{Function} z počátečního bodu daného parametrem \code{initial\-Condition}.
+                Pokud tento parametr není specifikován, zvolí se počáteční bod náhodně z \code{dimen\-sion}-rozměrné hyperkrychle se středem v počátku a délkou hrany $2*$\code{initialConditionBox}.
+                Výpočet je ukončen, pokud se kódu \code{maxFailedSteps}-krát po sobě nepodaří udělat úspěšný krok (krok směrem k menší funkční hodnotě).
+                Každý náhodný krok má konstantní délku danou parametrem \code{stepSize}.  
+            \item \code{MinimizeAdaptive}:
+                Předchozí metoda hledání minima má chybu $\Delta x_{i}\approx\ $\code{stepSize}.
+                Pro zmenšení chyby je v ní nutné zmenšit délku kroku náhodné procházky.
+                Pokud tak učiníme, výpočetní čas $T$ se výrazně prodlouží (desetkrát za každý řád zpřesnění výsledku, tj. $T\propto1/$\code{stepSize}).
+                Mnohem vhodnější je začít s velkým krokem a krok zmenšovat postupně.
+                Tak postupuje tato funkce: začne s krokem \code{initialStepSize} a pokaždé, když se jí nepodaří \code{maxFailedSteps}-krát provést úspěšný krok, zmenší délku kroku na polovinu.
+                Výpočet probíhá do chvíle, dokud je délka kroku větší než \code{finalStepSize}.
+                Konečná chyba je tedy $\Delta x_{i}\approx\ $\code{finalStepSize} a doba výpočtu roste pouze logaritmicky se zmenšováním této chyby, tj. $T\propto1/\log\ $\code{finalStepSize}.
+        \end{itemize}
+        Obě funkce vracejí řadu s celou náhodnou procházkou.
+        Nalezené minimum je tedy v posledním bodě této řady.
+
+        \python{
+            V kódu se vyskytuje jedna nová věc, a to je metoda \code{format} řetězce. 
+            Tato metoda postupně na místa řetězce vyznačená dvojicí znaků \{\} vloží své argumenty, přičemž argumenty mohou být libovolné objekty.
+            Pro více informací k formátování řetězců doporučuji tento výborný \href{https://pyformat.info}{návod}.
+        } 
+
+        Konkrétní funkce $f(x,y)$ a $g(x,y)$ ze zadání jsou v souboru \file{Minimize.py}.
+    \end{solution}
 
     \begin{task}
         Náhodnou procházku zakreslete jako čáru do grafu společně s konturovým grafem potenciálu.
@@ -772,15 +821,98 @@
         v souboru \file{Contourf.py}.
     \end{task}
 
+    \begin{solution}
+        \begin{figure}[!htbp]
+            \centering
+            \begin{subfigure}{0.49\linewidth}
+                \centering\epsfig{file=quadratic_minimum.eps,width=\linewidth}
+                \caption{\code{MultiplePaths(f)}}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}{0.49\linewidth}
+                \centering\epsfig{file=rosenbrock_minimum.eps,width=\linewidth}
+                \caption{\code{MultiplePaths(g)}}
+            \end{subfigure}
+            \begin{subfigure}{0.49\linewidth}
+                \centering\epsfig{file=quadratic_minimum_adaptive,width=\linewidth}
+                \caption{\code{MultiplePathsAdaptive(f)}}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}{0.49\linewidth}
+                \centering\epsfig{file=rosenbrock_minimum_adaptive.eps,width=\linewidth}
+                \caption{\code{MultiplePathsAdaptive(g)}}
+            \end{subfigure}
+
+			\caption{
+                \protect\small
+                Minimalizace kvadratické funkce~\eqref{eq:Minimizef} a Rosenbrockovy funkce~\eqref{eq:Minimizeg} pomocí náhodné procházky a deseti náhodných trajektorií.
+                \emph{1.~řádek:} Minimalizace metodou \code{Minimize} s délkou kroku \code{stepSize}$\ =0.01$ a kritériem ukončení \code{maxFailedSteps}$\ =100$.
+                Chyba určení minima je $\Delta x,y\approx0.01$, což v případě Rosenbrockova minima dává velkou chybu: Rosenbrockovo \uv{údolí} je velmi pozvolné podél a strmé napříč, což způsobuje, že trajektorie končí v širokém okolí skutečného minima v bodě $(x,y)=(1,1)$.
+                Počet kroků, než je výpočet ukončen, je zde $\approx1000$.
+                \emph{2.~řádek:} Minimalizace vylepšeným algoritmem s postupně se zmenšující krokem.
+                Na~počátku je krok velký, \code{initialStepSize}$\ =0.1$, ale postupně se zmešuje až k \code{finalStepSize}$\ =10^{-6}$.
+                To stačí i pro přesné nalezení minima Rosenbrockovy funkce.
+                Počet nutných kroků zde je $\approx3000$.
+            }	
+            \label{fig:RandomWalkMinimize}
+		\end{figure}
+
+        Vzorový kód je v souboru \file{Minimize.py} a využívá jako modul \file{RandomWalkMinimize.py}.
+        Obsahuje následující funkce:
+        \begin{itemize}
+            \item \code{ShowGraph}: 
+                Vykreslí konturový graf funkce \code{Function} a do něj zakreslí křivky (náhodné procházky) z parametru \code{paths}.
+                Pokud tento parametr není specifikován, vykreslí pouze konturový graf s funkcí.
+                Meze funkce pro vykreslení jsou dány parametrem \code{boxSize}.
+
+            \item \code{MultiplePaths}:
+                Vypočítá celkem \code{numPaths} jednoduchých náhodných minimalizačních procházek a vykreslí je v grafu společně s konturovým grafem minimalizované funkce.
+
+            \item \code{MultiplePathsAdaptive}:
+                Vykreslí totéž, avšak použije metodu s adaptivním krokem. 
+        \end{itemize}
+
+        Výsledky pro funkce $f$ a $g$ ze zadání jsou zobrazeny na obrázku~\ref{fig:RandomWalkMinimize}.
+
+        \python{
+            V kódu jsou následující vychytávky:
+            \begin{itemize}
+                \item \code{Function.\_\_name\_\_} 
+                    vrátí originální název funkce. 
+                    Každá funkce v Pythonu má hodnotu tohoto atributu nastavenou.
+                \item 
+                    V cyklu \code{for \_ in range(0, numPaths)} je proměnná označena podtržítkem \_.
+                    To je v Pythonu běžně užívané označení pro proměnnou, jejíž hodnota se nikde nepoužívá. 
+                \item
+                    Z argumentů funkce \code{MultiplePaths} chceme většinu pojmenovaných argumentů předat přímo funkci \code{Minimize}, aniž by nás zajímalo, kolik takových argumentů je a jak se jmenují.
+                    K tomu slouží proměnná uvozená dvěma hvězdičkami \code{**kwargs}\footnote{kw je zkratka pro \emph{keywored}; proměnná se samozřejmě může jmenovat jakkoliv, \code{kwargs} je jen standardně používané označení.}. 
+                    Ta v sobě nese všechny nepoužité pojmenované argumenty (nikoliv tedy \code{initialConditionBox}, který musíme při volání funkce \code{Minimize} předat explicitně).
+                    Typ proměnné \code{kwargs} je slovník.
+            \end{itemize}
+        }
+    \end{solution}
+
     \begin{task}
         Rozšiřte kód tak, aby počítal i vícerozměrnou náhodnou procházku, a najděte pomocí něho minimum funkce čtyř proměnných
         \begin{align}
-            f(s,t,u,v)
+            h(s,t,u,v)
                 &=\frac{1}{4}\left(s^{2}+t^{2}+u^{2}+v^{2}\right)\nonumber\\
                 &\quad-\frac{1}{2}\left[\left(s^{2}+t^{2}\right)\left(2-s^{2}-t^{2}-u^{2}-v^{2}\right)+\left(su-tv\right)^{2}\right]\\
                 &\quad+\frac{s}{2}\sqrt{2-s^{2}-t^{2}-u^{2}-v^{2}}\nonumber.
             \end{align}
     \end{task}
+
+    \begin{solution}
+        Volání funkce \code{MinimizeAdaptive(h, dimension=4, initialConditionBox=1)} vypočítá minimum v bodě
+        \begin{align}
+            s_{\text{min}}&\approx-0.913\nonumber\\
+            t_{\text{min}}=u_{\text{min}}=v_{\text{min}}&\approx0.000\\
+            h_{\text{min}}\equiv h(s_{\text{min}},t_{\text{min}},u_{\text{min}},v_{\text{min}})&\approx-0.771.\nonumber
+        \end{align}
+        V případě minimalizace této funkce je nutné ošetřit odmocninu, pod kterou se může během náhodné procházky objevit záporné číslo, což způsobí konec výpočtu s chybou.
+        V kódu je to vyřešeno tak, že v případě kroku do této \uv{nedovolené oblasti} vrátí funkce \code{h} hodnotu $\infty$ (v Pythonu \code{float("inf")}), která je větší než všechna možná jiná čísla, a tím tento krok zakáže.
+        Ze stejného důvodu je zmenšena oblast hledání počáteční polohy pomocí parametru \code{initialConditionBox=1}.
+    \end{solution}
 
     Jednoduchá náhodná procházka funguje dobře pro funkce s jedním minimem.
     V obecném případě má však funkce více lokálních minim a právě uvedený algoritmus skončí náhodně v jednom z nich, ze kterého se již nedokáže dostat ven.
@@ -811,16 +943,73 @@
         
         V praxi je největší umění zvolit správnou hodnotu teploty.
         Pokud zvolíme teplotu nízkou, skončíme v lokálním minimu a už se z něj nedostaneme, pokud naopak příliš vysokou, budeme chaoticky procházet krajinou naší funkce a žádné minimum nenajdeme.
-        Dobrá volba je začít spíš s vyšší teplotou a teplotu postupně snižovat.
+        Dobrá volba je začít spíš s~vyšší teplotou a teplotu postupně snižovat.
         Jakmile se ocitneme zaseklí v nějakém minimu, můžeme teplotu zase trochu zvýšit a tím vyzkoušet, zda se nepřesuneme do nějakého minima hlubšího.
 
         \begin{task}
             Naprogramujte Metropolisův algoritmus a odlaďte ho na případu funkce
-            \begin{equation}
-                f(x,y)=x^{4}-2x^{2}+x+y^{2}.
+            \begin{equation}\label{eq:Minimizer}
+                r(x,y)=x^{4}-2x^{2}+x+y^{2}.
             \end{equation}
             Tato funkce má dvě lokální minima (jedná se o vzorovou funkci ze souboru \file{Contourf.py}).
         \end{task}
+
+        \begin{solution}
+            Pro ukázku, že standardní minimalizace pomocí náhodné procházky vede náhodně do~různých lokálních minim, slouží obrázek~\ref{fig:MetropolisMinimizea}.
+
+            \begin{figure}[!htbp]
+                \centering
+                \begin{subfigure}{0.49\linewidth}
+                    \centering\epsfig{file=double_well_minimum.eps,width=\linewidth}
+                    \caption{\code{MultiplePaths(r)} pro \code{RandomWalkMinimize}.}
+                    \label{fig:MetropolisMinimizea}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}{0.49\linewidth}
+                    \centering\epsfig{file=double_well_minimum_metropolis.eps,width=\linewidth}
+                    \caption{\centering \code{MultiplePaths(r, numSteps=30000)} pro \code{MetropolisMinimize}.}
+                    \label{fig:MetropolisMinimizeb}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}{0.6\linewidth}
+                    \centering\epsfig{file=double_well_minimum_metropolis_adaptive,width=\linewidth}
+                    \caption{\code{MultiplePathsAdaptive(r)} pro \code{MetropolisMinimize}.}
+                    \label{fig:MetropolisMinimizec}
+                \end{subfigure}
+                \hfill
+    
+                \caption{
+                    \protect\small
+                    Porovnání různých metod minimalizace dvoujámové funkce~\eqref{eq:Minimizer}.
+                    \subref{fig:MetropolisMinimizea} Minimalizace obyčejnou náhodnou procházkou, která dokonverguje do náhodného lokálního minima.
+                    Následně je možné vybrat to minimum, které je hlubší.
+                    \subref{fig:MetropolisMinimizeb} Metropolisův algoritmus s konstantní teplotou $T=1$.
+                    Kvůli vysoké teplotě dráha výrazně fluktuuje, avšak postupně dokonverguje k okolí hlubšího globálního minima.
+                    \subref{fig:MetropolisMinimizec} Metropolisův algoritmus s postupně se zmenšujícím krokem a teplotou.
+                    Zde do globálního minima postupně zkonvergují všechny trajektorie.
+                    Počet použitých kroků je $2000$.
+                }	
+                \label{fig:MetropolisMinimize}
+            \end{figure}
+            
+            Metropolisův algoritmus je naprogramován v souboru \file{MetropolisMinimize.py}.
+            \begin{itemize}
+                \item \code{Minimize}: 
+                    Minimalizuje funkci \code{Function} se zadanou teplotou \code{temperature} a s fixní délkou kroku \code{stepSize}. 
+                    Výpočet je ukončen přesně po \code{maxSteps} krocích.
+                    Kritérium ukončení výpočtu z metody bez teploty zde nebude fungovat, jelikož konečná teplota způsobuje neustálý \uv{tepelný pohyb}, nikdy tedy nedojde k úplnému zastavení, ani pokud dosáhneme minima funkce.
+
+                    Výsledek je zobrazen na obrázku~\ref{fig:MetropolisMinimize}(b).
+                    Je vidět, že oproti případu bez teploty se dostaneme častěji k okolí globálního minima, avšak důsledkem celkem vysoké teploty nalezená poloha výrazně fluktuuje.
+                    Navíc, a to zde není zobrazeno, výsledek velmi záleží na kombinaci teploty a délky kroku.
+                    
+                \item \code{MinimizeAdaptive}:
+                    Vylepšení spočívající v postupném zmenšování teploty a zároveň kroku.
+                    Výpočet začne s krokem \code{initialStepSize} a teplotou \code{initialTemperature} a po každých \code{numStepsChange} krocích déku kroku i teplotu vydělí dvěma.
+                    Výpočet je ukončen po dosažení délky kroku \code{finalStepSize}.
+
+            \end{itemize}
+        \end{solution}
 
         \subsection{Minimalizace pomocí knihovny SciPy}
         Python obsahuje funkci pro hledání minima \code{minimize} v knihovně \file{scipy.optimize} 
@@ -830,7 +1019,150 @@
             Prostudujte \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html}{dokumentaci} k funkci \code{minimize} a vytvořte kód, který tuto funkci využije k najití minima všech doposud studovaných funkcí dvou a více proměnných.
         \end{task}
 
+        \begin{solution}
+            Knihovní funkci voláme příkazem \code{minimize(f, initialCondition)}, kde parametr \code{initialCondition} je $n$-tice udávající počáteční bod, ze kterého minimalizační procedura vystartuje.
 
+            V případě funkce s více lokálními minimy tato knihovní funkce nenajde nutně minimum globální.
+            Lze však pomocí volitelného parametru \code{method} vybrat metodu minimalizace, která bude úspěšnější.
+            Pokročilá varianta Metropolisova algoritmu je v v knihovně \file{scipy.optimize} naprogramována pod názvem \code{basinhopping} (\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.basinhopping.html}{dokumentace}).
+        \end{solution}
+
+    \subsection{Shrnutí}
+        \begin{itemize}
+            \item 
+                Jeden z nejjednodušších algoritmů na hledání minima (maxima) funkce je pomocí náhodné procházky.
+                K její implementaci stačí mít generátor náhodných čísel.
+
+            \item 
+                Úspěch algoritmů založených na náhodné procházce je podmíněn tím, že každý krok procházky musí vést do libovolného směru se stejnou pravděpodobností.
+                Při procházce v rovině toho lze docílit náhodným generováním úhlu.
+                Ve vícerozměrné procházce je nejvýhodnější použít algoritmus založený na Gaussovském náhodném vektoru (za předpokladu, že umíme generovat čísla z Gaussovského rozdělení; jeden jednoduchý takový generátor bude obsahem dalších cvičení).   
+            
+            \item 
+                Obecná funkce může mít více lokálních minim, přičemž náhodná procházka nás zavede do jednoho z nich, které nemusí být nejhlubší (globální).
+                K nalezení globálního minima lze využít Metropolisův algoritmus, který k náhodné procházce přidá tepelný pohyb, a tím umožní \uv{vyskočit} z mělkého lokálního minima.  
+
+                Metropolisův algoritmus se využívá i pro jiné termodynamické úlohy, například k modelování spinových systémů při konečné teplotě, čímž lze studovat fázový přechod feromagnet $\leftrightarrow$ paramagnet.
+        \end{itemize}
+
+\section{LaTeX}
+    Nedílnou součástí vědecké práce je prezentování výsledků, přičemž chceme, aby dokument bylo jednoduché napsat, a zároveň aby dobře vypadal.
+    Jelikož fyzikální odborné texty obsahují velké množství rovnic a symbolů, není nejvhodnější volbou používat textové editory pro kancelářskou práci, jejichž možnosti psaní rovnic a použití vědeckých stylů jsou celkem omezené.
+    Ve fyzice je nejběžnější psát texty v systému \LaTeX. 
+    
+    Dnes se jedná o nesmírně obsáhlý balík různých knihoven a doplňků, pomocí kterého lze
+    \begin{itemize}
+        \item psát dobře vypadající a typograficky správné odborné texty s matematickými rovnicemi, obrázky a tabulkami,
+        \item vybírat z množství profesionálně připravených stylů obsahujících podporu tvorby obsahu, rejstříku, poznámek pod čarou, kapitol, seznamů, referencí a dalších vychytávek,
+        \item stáhnout si přímo styl časopisu či knihy, pro kterou text připravujeme, 
+        \item používat tisíce matematických symbolů či druhů písem (lze psát třeba ve švabachu, gotickém písmu či elfím písmu, jste-li fanoušci díla J.R.R. Tolkiena),
+        \item využívat různá makra a doplňky k jednoduchému vytváření speciálních objektů (například chemických vzorců nebo Feynmannových diagramů),
+        \item vytvářet robustní prezentace (například pomocí knihovny Beamer),
+        \item nebo sázet notové materiály a kdovíco dalšího (rajčata však zatím ne).
+    \end{itemize}
+
+    Systém \LaTeX{} má dvě vrstvy:
+    \begin{enumerate}
+        \item \TeX{}: sazeč (zajišťuje, aby vše bylo na stránce tam, kde má být),
+        \item \LaTeX{}: typograf (zajišťuje, aby dokument dobře vypadal).
+    \end{enumerate}
+    Program \TeX{} začal vznikat v 70. letech 20. století a byl určen sázení textu a matematických rovnic při zachování vysoké typografické úrovně výsledného dokumentu.
+    \LaTeX{} je pak nadstavba maker, která psaní dokumentů velmi zjednodušuje a zcela zakrývá sazečskou práci. 
+    Příkazy v \TeX{}u jsou však stále dostupné.
+
+    Dokument napsaný v \LaTeX{}u striktně odděluje \emph{text} (obsah) a \emph{styl} (vzhled), přičemž my využijeme standardní \LaTeX{}ovský styl a budeme se zabývat výhradně tím, jak napsat text.
+    Jeho psaní se podobá programování: zdrojový soubor je textový dokument (nebo soubor textových dokumentů), který sestává z našeho textu a doplňujících příkazů.
+    Chceme-li vidět, jak bude výsledný dokument vypadat, musíme soubor \uv{přeložit}.
+
+    Existují různé \emph{distribuce} \LaTeX{}u.
+    Jedna z nejpoužívanějších je \href{https://miktex.org/}{MiKTeX}.
+    Dále je nutné mít k~dispozici textový editor, přičemž vhodný je ten, který rozumí \TeX{}ovským příkazům a bude umět zdrojový text poslat k překladu a zobrazit.
+    Pokročilé editory umějí navigovat mezi zdrojovým textem k přeloženému výsledku (většinou do PDF souboru) a naopak.
+    Z volně dostupných editorů jsou nejčastěji používané\footnote{Kromě prvního editoru mám zkušenost se všemi ostatními. Tento text píšu ve Visual Studiu Code, avšak pro začátek doporučuji nejlépe TeXstudio nebo TeXnicCenter.}
+    \begin{itemize}
+        \item {\bf TeXworks}: Editor se základními funkcemi. Je součástí distribuce MiKTeX.
+        \item \href{https://www.texniccenter.org/}{TeXnicCenter}: Pokročilejší editor, podpora použití projektů.
+        \item \href{https://www.texstudio.org/}{TeXstudio}: Pokročilý editor, podpora projektů, automatického doplňování, jednoduchá práce s obrázky, možnost tvorby záložek, pomocníci po tvorbu rovnic a tabulek, zvýrazňování syntaktických chyb.
+        \item \href{https://code.visualstudio.com/}{Visual Studio Code} s pluginem \href{https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop}{LaTeX Workshop}: Méně funkcí co se týče samotného \LaTeX{}u a komplikovaná instalace, avšak plná podpora všech funkcí tohoto rozšířeného vývojového prostředí (integrace s Gitem, pokročilé vyhledávání, programátorské možnosti editace).
+        \item \href{https://www.overleaf.com/}{Overleaf}: Online editor, ideální pro práci v týmu. 
+            Nemusíte nic isntalovat, potřebujete však připojení k internetu. 
+            Komplikované může být rozchodit nějaké méně rozšířené balíčky. 
+    \end{itemize}
+
+    \begin{task}
+        Nainstalujte si na svůj počítač nějakou distribuci \LaTeX{}u (doporučuji \href{https://miktex.org/}{MiKTeX}) a editor (doporučuji TeXstudio nebo TeXnicCenter).
+    \end{task}
+
+    \subsection{Formát \TeX{}ovského souboru}
+    \begin{itemize}
+        \item ASCII nebo UTF-8 kódování (lze použít i obskurnější kódování, ale v dnešní době je UTF-8 dostatečně univerzální).
+        \item \emph{Mezery}: více mezer je interpretováno jako jedna mezera, jednoduché zalomení řádku také jako jedna mezera.
+        \item \emph{Nový odstavec}: dvě zalomení řádku po sobě.
+        \item \emph{Příkazy}: uvozeny znakem \verb+\+, jejich povinné parametry ve složených závorkách \verb+{...}+, volitelné parametry v hranatých závorkách \verb+[...]+.
+            U jmen příkazů záleží na velikosti písmen.
+        \item \emph{Rovnice v textu}: oddělena znaky \verb+$...$+. Některé příkazy lze použít pouze uvnitř rovnic.
+        \item \emph{Komentář}: uvozen znakem \verb+%+. Vše za tímto znakem až do konce řádky je ingnorováno.
+    \end{itemize}
+
+    \subsection{Struktura \TeX{}ovského souboru}
+        \subsubsection{Preambule}
+            Jedná se o první řádky souboru, než začne vlastní tělo dokumentu.
+            Obsahuje výčet všech použitých balíčků a parametry, které se použijí pro styl textu.
+            \begin{itemize}
+                \item \verb+\documentclass[a4paper,twoside,11pt,twocolumn]{article}+: Základní specifikace stylu dokumentu (v tomto případě papír velikosti A4, dvoustránkový tisk, základní velikost písma 11 bodů, dvousloupcová sazba).
+                Tento příkaz je povinný, musí být vždy přítomen.
+
+                \item \verb+\usepackage{epsfig}+: Použije se balíček \verb+epsfig+.
+                
+                \item \verb+\def\abs#1{\left|#1\right|}}+: Definuje makro \verb+\abs+ s jedním parametrem (absolutní hodnota).
+            \end{itemize}
+
+            Nejčastěji používané balíčky jsou tyto:
+            \begin{itemize}
+                \item \verb+\usepackage{amsfonts,amsmath,amssymb}+:\footnote{AMS $=$ American Mathematical Society.} Rozšiřuje množství použitelných písem, matematických symbolů a struktur (např. snazší psaní matic, víceřádkových rovnic atd.).
+
+                \item \verb+\usepackage[utf8]{inputenc}+: Specifikuje UTF-8 jako vstupní kódování (jinak je očekáváno ASCII).
+            
+                \item \verb+\usepackage[czech]{babel}+: Udávající české formátování (například české uvozovky) a české názvy (například Obsah, Rejstřík).
+
+                \item \verb+\usepackage{epsfig}+: Umožní vkládání vektorových EPS souborů.
+
+                \item \verb+\usepackage[unicode]{hyperref}+: Umožní vkládání hypertextových odkazů a učiní klikabilní i odkazy na rovnice, obrázky, stránky či kapitoly v textu pro snazší navigaci. 
+
+            \end{itemize}
+
+        \subsubsection{Tělo dokumentu}
+            Tělo je uvozeno příkazy
+            \begin{verbatim}
+        \begin{document}
+            ...
+        \end{document}
+            \end{verbatim}
+            a do něj píšeme vlastní text dokumentu.
+            Vše, co se nachází za příkazem \verb+\end{document}+, je ignorováno.
+
+            Jednoduchý příklad \LaTeX{}ovského dokumentu s vysvětlením základů psaní textu je v repozitáři v adresáři LaTeX a jmenuje se \file{dokument.tex}.
+            K jeho přeložení budete potřebovat i přiložený EPS soubor \file{kubik.eps}.
+
+            Pokročilejším přikladem je přímo tento soubor (i jeho zdroják je v repozitáři).
+
+        \begin{task}
+            Prostudujte si vzorový \LaTeX{}ovský soubor \file{dokument.tex} a napište v \LaTeX{}u vlastní pojednání o nějakém svém oblíbeném vědci, fyzikálním (případně matematickém) teorému či rovnici.
+            Dokument by měl obsahovat aspoň jednu rovnici a nejlépe i obrázek.
+            Textová část stačí na jednu stránku.
+        \end{task}
+
+    \subsection{Další návody a odkazy}
+        \begin{itemize}
+            \item \href{http://www.penguin.cz/~kocer/texty/lshort2e/lshort2e-cz.pdf}{Ne příliš stručný úvod do sys1tému \LaTeX~$2_{\varepsilon}$}: Vynikající srozumitelný, přehledný a čtivý návod v češtině. 
+                Doporučuji prostudovat.
+
+            \item \href{https://www.root.cz/serialy/jak-na-latex/}{Jak na LaTeX}: Webový seriál, obsahuje i určité pokročilejší vychytávky.
+            
+            \item \href{http://tug.ctan.org/info/symbols/comprehensive/symbols-a4.pdf}{The comprehensive \LaTeX{} Symbol List}: Několikasetstránkový dokument se všemi možnými použitelnými matematickými i nematematickými symboly.
+            
+            \item \href{https://en.wikibooks.org/wiki/LaTeX}{\LaTeX}: Asi nejpodrobnější příručka dostupná na webu.
+        \end{itemize}    
 
 \begin{thebibliography}{99}
     \bibitem{Mul59} M.E. Muller, {\it A note on a method for generating points uniformly on n-dimensional spheres},

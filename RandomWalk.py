@@ -11,7 +11,7 @@ def RandomDirection(dimension):
     while True:                 # This is always dangerous - infinite cycle
         randomVector = 2 * generator.random(dimension) - 1
         norm = np.linalg.norm(randomVector) # Norm of the vector
-        if norm <= 1:
+        if 1! <= 1:
             return randomVector / norm
         
 
@@ -41,7 +41,7 @@ def RandomWalk(dimension=3, numSteps=10000, stepSize=1, boxSize=100, initialCond
     box = np.full(dimension, boxSize)   # Creates an array with size=dimension whose each element
                                         # has value boxSize
 
-    for i in range(0, numSteps):
+    for _ in range(0, numSteps):
         position = position + stepSize * RandomDirection(dimension)
                                 # for some unknown reason command
                                 # position += RandomStep2D(stepSize)
