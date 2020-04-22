@@ -14,6 +14,7 @@
 \usepackage{bold-extra}
 \usepackage[dvipsnames]{xcolor}
 \usepackage[subrefformat=simple,labelformat=simple]{subcaption} % Instead of subfigure
+%\usepackage{showlabels}
 
 \hypersetup{
 	pdftitle={Využití počítačů ve fyzice},
@@ -1202,6 +1203,7 @@
                 Neklesající spojitá funkce s oborem hodnot $\langle 0,1\rangle$ daná integrálem hustoty pravděpodobnosti\footnote{
                     Nebo obráceně, hustota pravděpodobnosti je derivace distribuční funkce,
                     \begin{equation}
+                        \label{eq:rhoF}
                         \rho(x)=\derivative{F}{x}.
                     \end{equation}
                 }
@@ -1225,11 +1227,13 @@
 
             \item {\bf Střední hodnota:}\footnote{{\bf E}xpectation value}
                 \begin{equation}
+                    \label{eq:Expectation}
                     \expectation{X}=\int_{-\infty}^{\infty}x\rho(x)\d x.
                 \end{equation}
 
             \item {\bf Rozptyl:}
                 \begin{equation}
+                    \label{eq:Dispersion}
                     \dispersion{X}
                         =\expectation{X^{2}}-\expectation{X}^{2}
                         =\int_{-\infty}^{\infty}x^{2}\rho(x)\d x-\left[\int_{\infty}^{\infty}x\rho(x)\d x\right]^{2}.
@@ -1294,6 +1298,7 @@
         \begin{itemize}
             \item {\bf Rovnoměrné rozdělení $R(a,b)$ na intervalu $\langle a,b\rangle$:}
                 \begin{align}
+                    \label{eq:UniformDistribution}
                     \rho_{R}(x)&=\frac{1}{b-a}=\text{konst.}\\
                     \label{eq:ExpectationR}
                     \expectation{R}&=\frac{a+b}{2}\\
@@ -1313,6 +1318,7 @@
                 Diskrétní rozdělení udávající počet nezávislých jevů $k$ v zadaném intervalu (například počet lidí, které potkáme na mostě cestou z Holešovic do Troji, nebo počet rozpadů radioaktivního prvku ve vzorku za jednotku času).  
                 Rozdělení pravděpodobnosti je
                 \begin{align}
+                    \label{eq:Poisson}
                     P_{k}&=\frac{\lambda^{k}}{k!}\e^{-\lambda},\\
                     \label{eq:ExpectationP}
                     \expectation{P}&=\lambda,\\
@@ -1326,6 +1332,37 @@
         Dokažte vztahy~\eqref{eq:ExpectationR}--\eqref{eq:DispersionR} a \eqref{eq:ExpectationP}--\eqref{eq:DispersionR}.
     \end{task}
 
+    \begin{solution}
+        K dokázání~\eqref{eq:ExpectationR}--\eqref{eq:DispersionR} vyjdeme z definičních vztahů pro střední hodnotu a rozptyl~\eqref{eq:Expectation}--\eqref{eq:Dispersion}:
+        \begin{align}
+            \expectation{R}
+                &=\int_{a}^{b}\frac{x}{b-a}\d x
+                =\frac{1}{b-a}\left[\frac{x^{2}}{2}\right]_{a}^{b}
+                =\frac{1}{b-a}\frac{b^{2}-a^{2}}{2}
+                =\frac{a+b}{2},\\
+            \dispersion{R}
+                &=\int_{a}^{b}\frac{x^{2}}{b-a}\d x-\left(\frac{a+b}{2}\right)^{2}
+                =\frac{1}{b-a}\frac{b^{3}-a^{3}}{3}-\frac{(a+b)^{2}}{4}\nonumber\\
+                &=\frac{a^{2}+ab+b^{2}}{3}-\frac{a^{2}+2ab+b^{2}}{4}
+                =\frac{a^{2}-2ab+b^{2}}{12}=\frac{(b-a)^{2}}{12}.
+        \end{align}
+
+        Poissonovo rozdělení je diskrétní, je tudíž nutné použít diskrétní analogii vztahů~\eqref{eq:Expectation}--\eqref{eq:Dispersion} (nahrazení integrálů sumami):
+        \begin{align}
+            \expectation{P}
+                &=\sum_{k=0}^{\infty}kP_{k}
+                =\sum_{k=1}^{\infty}\frac{\lambda^{k}}{(k-1)!}\e^{-\lambda}
+                =\left|\begin{array}{c}\text{substituce} \\ l=k-1\end{array}\right|
+                =\sum_{l=0}^{\infty}\frac{\lambda^{l+1}}{l!}\e^{-\lambda}=\lambda,\\
+            \dispersion{P}
+                &=\sum_{k=0}^{\infty}k^{2}P_{k}-\lambda^{2}
+                =\sum_{k=1}^{\infty}\frac{k\lambda^{k}}{(k-1)!}\e^{-\lambda}-\lambda^{2}\nonumber\\
+                &=\sum_{k=1}^{\infty}\frac{(k-1)\lambda^{k}}{(k-1)!}\e^{-\lambda}+\sum_{k=1}^{\infty}\frac{\lambda^{k}}{(k-1)!}\e^{-\lambda}-\lambda^{2}\nonumber\\
+                &=\sum_{k=2}\frac{\lambda^{k}}{(k-2)!}\e^{-\lambda}+\lambda-\lambda^{2}
+                =\lambda^{2}+\lambda-\lambda^{2}=\lambda.
+        \end{align}
+    \end{solution}
+
     \begin{task}
         Naprogramujte funkci pro výpočet histogramu: na vstupu bude pole hodnot (výběr z nějakého rozdělení) a počet intervalů histogramu; na výstupu bude pole, jehož každý prvek bude odpovídat jednomu intervalu histogramu a ponese počet hodnot, které do tohoto intervalu padnou ze vstupního pole.
         Zamyslete se nad co nejefektivnějším algoritmem.
@@ -1334,6 +1371,45 @@
             Knihovna \code{matplotlib} obsahuje funkce na přímé vykreslení sloupcového histogramu. 
         }
     \end{task}
+
+    \begin{solution}
+        Vzorový výpočet histogramu je naprogramován v modulu \code{Histogram.py} ve funkci \code{Histogram}.
+        Klíčové jsou dva řádky:
+        \begin{verbatim}
+        index = int((d - minValue) / (maxValue - minValue) * numBins)
+        histogram[index] += 1
+        \end{verbatim}
+        Hodnotu, kterou chceme zařadit do příslušného okénka histogramu, máme v proměnné \code{d}.
+        Z ní spočítáme celočíselný index v intervalu mezi $0\leq\mathtt{index}<\mathtt{numBins}$ a pak v poli histogram na příslušném indexu přidáme jedničku.
+        Histogramované pole hodnot \code{data} tedy stačí procházet jen jednou, algoritmus má tudíž časovou náročnost $\mathcal{O}(N)$.
+        Nutným předpokladem pro použití tohoto algoritmu je, že všechna okénka histogramu musejí mít stejnou šířku.
+        Funkce \code{Histogram} pak vrací pole s $x$-ovými hodnotami (středy histogramů) a pole s hotovým histogramem.
+        Pro snazší porovnání s hustotami pravděpodobnosti lze navíc nastavit parametr \code{normalize=True}, výsledný histogram pak bude splňovat
+        \begin{equation}
+            \sum_{i=1}^{\mathtt{numBins}}h_{i}w_{i}=1,
+        \end{equation}
+        kde $h_{i}$ je hodnota histogramu v $i$-tém okénku a $w_{i}=(\mathtt{maxValue}-\mathtt{minValue})/\mathtt{numBins}$ šířka okénka.
+
+        Příklady histogramů a jejich vykreslení do grafu jsou v řešení následujícího úkolu a v obrázku~\ref{fig:Distributions}.
+    \end{solution}
+
+    \begin{figure}[!htbp]
+        \begin{subfigure}{0.49\linewidth}
+            \centering\epsfig{file=uniform.eps,width=\linewidth}
+            \caption{}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.49\linewidth}
+            \centering\epsfig{file=uniform2.eps,width=\linewidth}
+            \caption{}
+        \end{subfigure}
+        \caption{
+            \protect\small
+            Srovnání histogramu získaného z $n=10^{5}$ hodnot vybraných z daného rozdělení a porovnání s teoretickou hustotou pravděpodobnosti (a) rovnoměrného rozdělení~\eqref{eq:UniformDistribution} ($a=0,b=1$) a (b) součtu dvou rovnoměrných rozdělení~\eqref{eq:2UniformDistribution}.
+            Počet intervalů histogramu je v obou případech $N=100$.
+        }
+        \label{fig:Distributions}
+    \end{figure}
 
     \begin{task}\label{task:Distribution}
         Otestujte funkci z předchozího úkolu na následujících vstupních polích:
@@ -1352,17 +1428,143 @@
         Pro pěkné grafy volte alespoň $n=10000$ (počet prvků výběru) a $N=100$ (počet intervalů histogramu).
     \end{task}
 
+    \begin{solution}
+        Testování funkce \code{Histogram} pro různá rozdělení je v modulu \file{Distributions.py}.
+        \begin{enumerate}
+            \item 
+                Hustota pravděpodobnosti rovnoměrného rozdělení je zobrazena funkcí \code{Uniform}.
+                Výsledný graf je na obrázku~\ref{fig:Distributions}.
+
+            \item
+                Hustota pravděpodobnosti součtu dvou rovnoměrných rozdělení je podle~\eqref{eq:SumDensity}
+                \begin{align}
+                    \rho_{2}(z)
+                        =\int_{0}^{1}\rho_{1}(\xi)\rho_{1}(z-\xi)\d\xi
+                        =\int\rho_{1}(z-\xi)\d\xi,
+                \end{align}
+                kde $\rho_{1}(\xi)=1$ pro $0\leq\xi\leq1$ a $\rho_{1}(\xi)=0$ jinde,
+                čímž se v integrálu zbavíme faktoru $\rho_{1}(\xi)$, neboť je rovný $1$ na celém integračním intervalu.
+                Integraci nyní rozdělíme na čtyři intervaly:
+                \begin{align}
+                    z&<0: &
+                    \rho_{2}(z)&=0,\nonumber\\
+                    0&<z<1: &
+                    \rho_{2}(z)&=\int_{0}^{z}\d\xi=z,\nonumber\\
+                    1&<z<2: &
+                    \rho_{2}(z)&=\int_{z-1}^{z}\d\xi=1-(1-z)=2-z,\nonumber\\
+                    z&>2: &
+                    \rho_{2}(z)&=0.\nonumber
+                \end{align}
+                To lze zapsat zjednodušeně jako
+                \begin{equation}
+                    \label{eq:2UniformDistribution}
+                    \rho_{2}(z)=\left\{\begin{array}{ll}
+                        1-\abs{1-z} & 0<z<2, \\
+                        0 & \text{jinak}.
+                    \end{array}\right.
+                \end{equation}
+                Rozdělení má trojúhelníkový tvar, což odráží skutečnost, že při součtu dvou rovnoměrně rozdělených čísel na intervalu $\langle0,1\rangle$ je mnohem více možností, jak realizovat součet okolo $1$, než součet na krajích intervalu (stejně jako při hodu dvěma kostkami je pravděpodobnost součtu $7$ větší než pravděpodobnost součtu $12$, neboť součet $6$ můžeme realizovat šesti způsoby, zatímco součet $12$ jen jedním způsobem).
+                Hustota pravděpodobnosti se počítá funkcí \code{Sum2Uniform} a výsledný graf je zobrazen na obrázku~\ref{fig:Distributions}.
+            
+            \item  
+                Výpočet hustoty pravděpodobnosti součtu více rovnoměrných rozdělení je naprogramován ve funkci \code{SumUniform} a porovnání s příslušně nanormovanou Gaussovkou a je na obrázku~\ref{fig:Gaussian}. 
+        \end{enumerate}
+    \end{solution}
+
+    \begin{figure}[!htbp]
+        \begin{subfigure}{0.33\linewidth}
+            \centering\epsfig{file=uniform3.eps,width=\linewidth}
+            \caption{}
+        \end{subfigure}
+        \begin{subfigure}{0.33\linewidth}
+            \centering\epsfig{file=uniform4.eps,width=\linewidth}
+            \caption{}
+        \end{subfigure}
+        \begin{subfigure}{0.33\linewidth}
+            \centering\epsfig{file=uniform20.eps,width=\linewidth}
+            \caption{}
+        \end{subfigure}
+        \caption{
+            \protect\small
+            Srovnání histogramu získaného z $n=10^{5}$ hodnot daných součtem $m$ (a) $m=3$, (b) $m=4$ a (c) $m=20$ rovnoměrně rozdělených náhodných čísel, s Gaussovskou hustotou pravděpodobnosti. 
+            Již pro $m=3$ je shoda velmi dobrá a centrální limitní věta~\eqref{eq:CLT} je přibližně splněna.
+            V případě $m=20$ je již rozdíl od Gaussovského rozdělení prakticky nepozorovatelný.
+            Počet intervalů histogramu je ve všech případech $N=100$.
+        }
+        \label{fig:Gaussian}
+    \end{figure}
+
     \begin{task}\label{task:NormalDistribution}
         Na základě centrální limitní věty~\eqref{eq:CLT1} vytvořte jednoduchý generátor čísel s normálním Gaussovským rozdělením $N(0,1)$.
         Jaké je optimální hodnota $m$, abychom získali dostatečně přesnou aproximaci normálního rozdělení, a přitom použili co nejméně algebraických operací?
     \end{task}
             
+    \begin{solution}
+        Ideální počet sečtených čísel z rovnoměrného rozdělení pro získání velmi dobré aproximace čísla z normálního Gaussova rozdělení je $m=12$, neboť pro tuto hodnotu:
+        \begin{itemize}
+            \item Rozptyl výsledného rozdělení je $\sigma=1$ díky vztahům~\eqref{eq:CLT1} a~\eqref{eq:DispersionR}.
+            \item Hodnota nagenerovaného čísla je v intervalu $\langle0,12\rangle$, se střední hodnotou $6$.
+                Pokud tuto střední hodnotu odečteme dle vzorce~\eqref{eq:CLT1}, obdržíme rozdělení se střední hodnotou $0$ a zahrnující interval $6\sigma$, který pokrývá $99.9999998\%$ Gaussovského rozdělení.
+        \end{itemize}
+        Generátor je naprogramován v modulu \file{GaussianGenerators}, funkce \code{GaussianGenerator1}.
+        Srovnání generátoru s odpovídající Gaussovkou je na obrázku \ref{fig:GaussianGenerator}(a).
+    \end{solution}
+
     \begin{task}
         Nakreslete histogram pro rozdělení hodnot v jednotlivých intervalech histogramů z úlohy \ref{task:Distribution}.
         Jaké očekáváte statistické rozdělení v tomto případě?
     \end{task}
 
-    \subsection{Výběr z neznámého rozdělení}
+    \begin{figure}[!htbp]
+        \begin{subfigure}{0.49\linewidth}
+            \centering\epsfig{file=gaussian_sum12.eps,width=\linewidth}
+            \caption{}
+        \end{subfigure}
+        \begin{subfigure}{0.49\linewidth}
+            \centering\epsfig{file=gaussian_hit_and_miss.eps,width=\linewidth}
+            \caption{}
+        \end{subfigure}
+        \caption{
+            \protect\small
+            Srovnání jednoduchých generátorů Gaussovsky rozdělených náhodných čísel. 
+            (a) Generátor založený na použití Centrální limitní věty~\eqref{eq:CLT1}: Gaussovské náhodné číslo je získáno jako součet $m=12$ rovnoměrně rozdělených náhodných čísel.
+            (b) Generátor založený na hit-and-miss metodě použité na hustotu pravděpodobnosti Gaussovského rozdělení.
+            V obou případech je pro zobrazovaný histogram použito  $n=10^{6}$ náhodných čísel a počet intervalů histogramu je $N=100$.
+            U generátoru (a) je pozorována drobná odchylka v okolí maxima hustoty pravděpodobnosti, u generátoru (b) žádná odchylka pozorována není.
+            Nutno zdůraznit, že generátor (a) je zhruba o řád rychlejší než generátor (b), jak je ukázáno v úloze~\ref{task:GeneratorTime}.
+        }
+        \label{fig:GaussianGenerator}
+    \end{figure}
+
+    \begin{solution}
+        Počet hodnot v jednotlivých intervalech splňuje předpoklady pro Poissonovo rozdělení, očekáváme tedy Poissonovo rozdělení se parametrem
+        \begin{equation}
+            \lambda=\frac{\mathtt{numValues}}{\mathtt{numBins}},
+        \end{equation}
+        který udává zároveň střední hodnotu~\eqref{eq:ExpectationP} a zároveň rozptyl~\eqref{eq:ExpectationP}.
+        Chceme-li toto rozdělení zobrazit, je potřeba jisté delikátnosti.
+        \begin{itemize}
+            \item 
+                Počty hodnot v okénkách (nenormovaného) histogramu jsou přirozená čísla.
+                Pro zobrazení jejich rozdělení je tedy vhodné volit sekundární histogram se šířkou intervalu 1 (nebo s jinou celočíselnou šířkou).
+            \item
+                Hezčí rozdělení získáme pro malé parametry $\lambda$ (pro $\lambda$ velké se Poissonovo rozdělení blíží Gaussovskému rozdělení).
+                V kódu volím hodnoty tak, aby $\lambda=10$.
+        \end{itemize}
+        Srovnání příslušného histogramu s teoretickým rozdělením~\eqref{eq:Poisson} je vypočteno funkcí \code{Poisson} ze souboru \file{Distributions.py} a je vykresleno na obrázku~\ref{fig:Poisson}.
+    \end{solution}
+
+    \begin{figure}[!htbp]
+        \centering\epsfig{file=poisson.eps,width=0.6\linewidth}
+        \caption{
+            \protect\small
+            Poissonovo rozdělení, získané z fluktuací počtu hodnot histogramu s $N=10^{5}$ intervaly a $n=10^{6}$ rovnoměrně rozdělenými vstupními čísly.
+            Střední hodnota a rozptyl takto získaného Poissonova rozdělení je $\lambda=10$. 
+        }
+        \label{fig:Poisson}
+    \end{figure}
+
+    \subsection{Výběr z neznámého rozdělení}\label{sec:SelectDistribution}
         V praxi se můžeme setkat se situací, kdy máme zadanou hustotu pravděpodobnosti či distribuční funkci nějakého komplikovaného rozdělení a chceme generovat výběr z tohoto rozdělení.
 
         \begin{itemize}
@@ -1378,6 +1580,7 @@
                 V tomto případě využijeme skutečnosti, že obor hodnot distribuční funkce je $F(x)\in\langle0,1\rangle$. 
                 Stačí tedy generovat náhodné číslo $y$ z rovnoměrného rozdělení na intervalu $\langle0,1\rangle$ a číslo 
                 \begin{equation}
+                    \label{eq:xF}
                     x=F^{-1}(y),
                 \end{equation}
                 kde $F^{-1}$ je inverzní funkce k $F$, bude z rozdělení s danou $F$.
@@ -1394,19 +1597,256 @@
                 je náhodná veličina s rozdělením daným distribuční funkcí $F$.
         \end{itemize}
 
-    \begin{task}
+    \begin{task}\label{task:GeneratorTime}
         Pomocí právě popsané metody vytvořte generátor čísel s Gaussovským normálním rozdělením daným hustotou pravděpodobnosti~\eqref{eq:NormalDistribution}.
         Porovnejte jeho rychlost s generátorem založeným na centrální limitní větě, který jste naprogramovali v úloze~\ref{task:NormalDistribution} a s generátorem z některé z knihoven.\footnote{Porovnání můžete provést tak, že nagenergujete větší množství čísel různými metodami, například $n=10^{6}$, a změříte dobu výpočtu.} 
     \end{task}
 
+    \begin{solution}
+        Generátor je naprogramován v modulu \file{GaussianGenerators}, funkce \code{GaussianGene\-ra\-tor2}, a porovnání histogramu takto nagenerovaných náhodných hodnot s teoretickou hustotou pravděpodobnosti je na obrázku~\ref{fig:GaussianGenerator}(b). 
+        Nagenerování $10^6$ Gaussovsky rozdělených náhodných čísel trvá na mém PC\footnote{
+            Pokud k nagenerování $n$ hodnot použijeme knihovní funkci s počtem v argumentu, \code{generator.normal(1000000)}, výpočet trvá zlomek vteřiny.
+            Velká část výpočetního času je tudíž způsobena voláním funkcí a prováděním cyklu. 
+        }
+        \begin{itemize}
+            \item {\bf 4s}: funkce \code{generator.normal()} z knihovny \file{numpy},
+            \item {\bf 16s}: součet 12 rovnoměrně rozdělených čísel,
+            \item {\bf 111s}: hit-and-miss metoda.
+        \end{itemize}
+    \end{solution}
+
     \begin{task}
         Vytvořte generátor čísel z rozdělení daném distribuční funkcí
         \begin{equation}
-            F(x)=\frac{1}{2}\left(1+\arctan{x}\right).
+            \label{eq:F}
+            F(x)=\frac{1}{2}\left(1+\frac{2}{\pi}\arctan{x}\right).
         \end{equation}
         Jak vypadá analyticky hustota pravděpodobnosti?
         Nakreslete histogram a porovnejte.
     \end{task}
+
+    \begin{figure}[!htbp]
+        \centering\epsfig{file=f.eps,width=0.6\linewidth}
+        \caption{
+            \protect\small
+            Cauchyho (Breit-Wignerovo) rozdělení nagenerované z distribuční funkce~\eqref{eq:F} a porovnané s teoretickou hustotou pravděpodobnosti~\eqref{eq:Cauchy}.
+            Počet hodnot pro histogram je $n=10^5$, počet intervalů $N=500$.
+        }
+        \label{fig:F}
+    \end{figure}
+
+    \begin{solution}
+        Hustota pravděpodobnosti je dána derivací distribuční funkce podle vztahu~\eqref{eq:rhoF}, tj.
+        \begin{equation}
+            \label{eq:Cauchy}
+            \rho(x)=\derivative{F}{x}=\frac{1}{\pi}\derivative{}{x}\arctan{x}=\frac{1}{\pi}\frac{1}{1+x^{2}}.
+        \end{equation}
+        Toto rozdělní se nazývá \emph{Cauchyho} či v kvantové fyzice \emph{Breit-Wignerovo} a tam modeluje šířku energetických hladin exponenciálně se rozpadajících systémů.
+
+        Ke generování čísel z tohoto rozdělení využijeme vztahu~\eqref{eq:xF}.
+        Musíme tedy určit funkci inverzní k distribuční funkci~\eqref{eq:F}, která je
+        \begin{equation}
+            F^{-1}(y)=\tan\left[\frac{\pi}{2}\left(2y-1\right)\right],
+        \end{equation}
+        a za $y$ dosazovat čísla z rovnoměrného rozdělení na intervalu $\langle0,1\rangle$.
+
+        Histogram čísel nagenerovaných z Cauchyho rozdělení a srovnání s hustotou pravděpodobnosti~\eqref{eq:Cauchy} je počítán funkcí \code{Poisson} z modulu \file{Distribution.py} a je zobrazen na obrázku~\ref{fig:F}.
+        Rozdělení má dlouhý dosah, s rostoucím $x$ klesá jen polynomiálně k nule, pravděpodobnost nagenerování hodnoty daleko od maxima je tudíž velká. 
+        V obrázku proto zobrazuji jen okno $x\in\langle-10,10\rangle$.
+    \end{solution}
+
+
+\section{Monte-Carlo metoda}
+    Pod Monte-Carlo metodou se rozumí, že namísto systematického (a obvykle zdlouhavého) procházení nějakého parametrického prostoru využíváme náhodně generované body a hledané vlastnosti našeho systému určíme statisticky.\footnote{
+        Monte Carlo je oblast Monaka, ve kterém se nacházely a doposud nacházejí slavná kasina.
+        Odtud název.
+    
+    }
+    V tomto cvičení zúročíme veškeré dosavadní zkušenosti s náhodnými čísly a budeme ze zabývat zejména integrací Monte-Carlo.
+
+    Možná jste se již setkali se problémem tzv. \href{https://cs.wikipedia.org/wiki/Buffonova_jehla}{Buffonovy jehly}: ppomocí náhodného házení jehly (či jakékoliv tyčky) na síť rovnoběžných čar nakreslenou na zemi lze určit číslo $\pi$, 
+    \begin{equation}
+        \pi\approx\frac{2l}{h}\frac{N_{\text{zásah}}}{N_\text{celkem}},
+    \end{equation}
+    kde $h$ je vzdálenost čar, $l\leq h$ délka jehly, $N_{\text{celkem}}$ celkový počet hodů a $N_{\text{zásah}}$ počet hodů, při kterých jehla po dopadu kříží nějakou z čar.
+    Buffonova jehla je názorné experimentální použití metody Monte-Carlo, konkrétně varianty nazývané hit-and-miss.
+    Té jsme se již dotkli v sekci~\ref{sec:SelectDistribution} a nyní si rozebereme podrobněji.
+    
+    \begin{task}
+        Metodou Monte-Carlo vyřešte tzv. narozeninový problém: Uvažujte skupinu $n$ lidí. 
+        Jaká je pravděpodobnost, že dva lidi ve skupině budou mít narozeniny ve stejný den?
+        Úloha se samozřejmě dá vyřešit \href{https://cs.wikipedia.org/wiki/Narozeninov%C3%BD_probl%C3%A9m}{exaktně}, ale zkuste si úlohu vyřešit metodou Monte-Carlo:
+        Pokud nagenerujete náhodně $N_{\text{celkem}}$-krát narozeniny $n$ lidí a označíte $N_{\text{zásah}}$ případy, kdy alespoň dvoje narozeniny padnou na stejný den, bude podle zákona velkých čísel hledaná pravděpodobnost rovna
+        \begin{equation}
+            p\approx\frac{N_{\text{zásah}}}{N_{\text{celkem}}}
+        \end{equation}
+        (rovnost by nastala pro $N_{\text{celkem}}\rightarrow\infty$).
+        Naprogramujte tuto úlohu a určete,
+        \begin{enumerate}
+            \item jaká je pravděpodobnost pro skupinu $30$ lidí a
+            \item jak velkou skupinu potřebujete, aby byla pravděpodobnost alespoň $30\%$.
+        \end{enumerate}
+    \end{task}
+
+    \begin{figure}[!htbp]
+        \begin{subfigure}{0.44\linewidth}
+            \centering\includegraphics[width=\linewidth]{hit_and_miss.png}
+            \caption{}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.54\linewidth}
+            \centering\includegraphics[width=\linewidth]{hit_and_miss_int.png}
+            \caption{}
+        \end{subfigure}
+        \caption{
+            \protect\small
+            Metoda hit-and-miss (a) pro výpočet plochy složitého obrazce a (b) pro výpočet integrálu jednorozměrné funkce.
+            Podrobnosti k obrázku jsou uvedeny v textu. 
+        }
+        \label{fig:HitAndMiss}
+    \end{figure}
+
+    \subsection{Hit-And-Miss}
+        Tato metoda spočívá v jednoduché aplikaci zákona velkých čísel.
+        Její esence je načrtnuta na obrázku~\ref{fig:HitAndMiss}.
+        Uvažujme nejprve, že chceme změřit plochu $s$ černého obrazce složitého tvaru znázorněného na panelu (a).
+        Obrazec vepíšeme do jiného jednoduchého obrazce, jehož plochu $S$ známe (nejčastěji obdélník, případně kruh).
+        Poté do tohoto obrazce $S$ náhodně \uv{házíme} body (křížky) a počítáme, kolikrát se trefíme do černého obrazce (červené křížky).
+        Neznámá hledaná plocha $s$ je pak při již použitém značení
+        \begin{equation}
+            \label{eq:MCS}
+            s\approx S\frac{N_{\text{zásah}}}{N_{\text{celkem}}}.
+        \end{equation}
+
+        Analogicky postupujeme při integrování, což je ukázáno na panelu (b).
+        Integrál v mezích $(a,b)$ je plocha pod křivkou funkce $f(x)$  (na obrázku černě vyšrafovaná plocha ohraničená zespodu osou $x$, shora funkcí $f(x)$ a ze stran modrými čarami $x=a$ a $x=b$).
+        Uvedenou oblast vepíšeme do obdélníku o hranách $l=b-a$ a $h$ s plochou $S=(b-a)h$ a stejnou metodou jako u panelu (a) a pomocí stejného vzorce jako je~\eqref{eq:MCS} vypočítáme hodnotu integrálu:
+        \begin{equation}
+            \label{eq:MCSInt}
+            \int_{a}^{b}f(x)\d x\approx S\frac{N_{\text{zásah}}}{N_{\text{celkem}}}=(b-a)h\frac{N_{\text{zásah}}}{N_{\text{celkem}}}.
+        \end{equation}
+
+        \subsubsection{Chyba}
+            Počet zásahů je vlastně počet nezávislých \uv{hodů}, kterými se trefíme do oblasti, jejíž plochu $S$ hledáme.
+            Pokud budeme opakovat metodu hit-and-miss s fixním $N_{\text{celkem}}$, bude mít náhodná veličina $N_{\text{zásah}}$ Poissonovo rozdělení se střední hodnotou~\eqref{eq:ExpectationP} a rozptylem~\eqref{eq:DispersionP}
+            \begin{equation}
+                \lambda=\expectation{N_{\text{zásah}}}=\dispersion{N_{\text{zásah}}}.
+            \end{equation}
+            Budeme-li mít jen jednu realizaci s dostatkem zásahů, můžeme střední hodnotu odhadnout pomocí této realizace, $\expectation{N_{\text{zásah}}}\approx N_{\text{zásah}}$ a absolutní chybu odhadneme směrodatnou odchylkou
+            \begin{equation}
+                \Delta N_{\text{zásah}}=\sqrt{\dispersion{N_\text{zásah}}}\approx\sqrt{N_{\text{zásah}}}.
+            \end{equation}
+            Relativní chyba pak je
+            \begin{equation}
+                \label{eq:MCRelative}
+                \delta N_{\text{zásah}}=\frac{\Delta N_{\text{zásah}}}{N_{\text{zásah}}}\approx\frac{1}{\sqrt{N_{\text{zásah}}}}.
+            \end{equation}
+            Tento vzorec platí i pro relativní chybu ve výpočtu plochy~\eqref{eq:MCS} či integrálu~\eqref{eq:MCSInt}.
+
+            Jelikož $N_{\text{zásah}}\propto N_{\text{celkem}}$, z uvedených úvah vyplývá, že
+            \begin{itemize}
+                \item relativní chyba klesá jako převrácená hodnota odmocniny celkového počtu pokusů $N_{\text{celkem}}$ a
+                \item chceme-li zpřesnit výsledek získaný touto metodou desetkrát, musíme zestonásobit počet pokusů.
+            \end{itemize}
+            V praxi za použití běžných výpočetních prostředků lze dosáhnout nanejvýš $N_{\text{celkem}}\approx10^10$, což dá výsledek s relativní chybou minimálně $\delta\approx10^{-5}$, tj. pět desetinných míst.
+
+        \subsubsection{Použití}
+            Integrace pomocí metody hit-and-miss se nepoužívá, jelikož je příliš neefektivní. 
+            K jejímu úspěšnému použití totiž musíme znát maximum funkce na zadaném intervalu, abychom efektivně určili výšku obdélníku $h$, a obecně je $N_{\text{zásah}}/N_{\text{celkem}}$ velmi malé číslo (funkce mají dlouhý chvost nebo jsou příliš vysoké), většina \uv{hodů} jde tedy mimo a i při jejich velkém množství získáme málo zásahů, a tudíž velkou chybu podle vztahu~\eqref{eq:MCRelative}.
+
+            Na druhou stranu se tato metoda hodí k výpočtu povrchů, objemů či hyperobjemů v případě vícerozměrných objektů.
+            
+            \begin{task}
+                Vytvořte program na výpočet objemu $d$-rozměrné jednotkové koule metodou Monte-Carlo.\footnote{
+                    Pod $1$-rozměrnou jednotkovou koulí rozumíme úsečku délky 2, pod $2$-rozměrnou jednotkovou koulí jednotkový kruh.
+                    Povrch jednotkového kruhu je $S=\pi$, výsledek lze tedy použít i k určení čísla $\pi$, aniž byste museli házet Buffonovou jehlou.
+                }
+                Pro jakou dimenzi bude tento objem největší číslo?
+            \end{task}
+
+    \subsection{Monte-Carlo integrace}
+    \begin{figure}[!htbp]
+        \begin{subfigure}{0.49\linewidth}
+            \centering\includegraphics[width=\linewidth]{int1.png}
+            \caption{}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{0.49\linewidth}
+            \centering\includegraphics[width=\linewidth]{int2.png}
+            \caption{}
+        \end{subfigure}
+        \caption{
+            \protect\small
+            Monte-Carlo integrace.
+            Vysvětlení je v hlavním textu.
+        }
+        \label{fig:MCIntegral}
+    \end{figure}
+
+    Pro hledání integrálu je mnohem efektivnější metoda, již lze vysvětlit pomocí obrázku~\ref{fig:MCIntegral}.
+    Uvažujme neprve, že známe pár hodnot $(x_{j},f(x_{j}))$, nic víc, nic míň.
+    Na základě těchto hodnot můžeme učinit pouze velmi hrubý odhad integrálu, a to jako plochu červeně vyšrafovaného obdélníku jako na panelu (a),
+    \begin{equation}
+        \int_{a}^{b}f(x)\d x\approx (b-a)f(x_{j}).
+    \end{equation}
+    Pokud budeme mít párů hodnot $(x_{j},f(x_{j}))$ více, jak je znázorněno na panelu (b), vezmeme za odhad hodnoty integrálu průměr ploch takovýchto obdélníků,
+    \begin{equation}
+        \label{eq:MCInt}
+        \int_{a}^{b}f(x)\d x
+            \approx \frac{1}{N}\sum_{j=1}^{N}(b-a)f(x_{j})
+            =\frac{b-a}{N}\sum_{j=1}^{N}f(x_{j}).
+    \end{equation}
+    V právě uvedeném postupu tkví je podstata integrace Monte-Carlo.
+    Obecně platí, že pokud hodnoty $x_{j}$ vybíráme z rozdělení s hustotou pravděpodobnosti $\rho(x)$, je integrál odhadnutý výrazem
+    \begin{equation}
+        \int_{a}^{b}f(x)\d x
+            \approx\frac{1}{N}\sum_{j=1}^{N}\frac{f(x_{j})}{\rho(x_{j})},
+    \end{equation} 
+    přičemž nejvhodnější je volit takové pravděpodobnostní rozdělení, jehož hustota pravděpodobnosti co nejlépe kopíruje integrovanou funkci.\footnote{
+        Tento postup se nazývá \emph{importance sampling}.
+    }
+    V praxi, jelikož na funkci nejčastěji pohlížíme jako na \uv{černou skříňku} a o jejím průběhu nic nevíme, se jako nevhodnější jeví volit rovnoměrné rozdělení s hustotou pravděpodobnosti~\eqref{eq:UniformDistribution}, která po dosazení dá předchozí vzorec~\eqref{eq:MCInt}.
+
+    Chybu metody integrace lze odhadnout pomocí směrodatné odchylky
+    \begin{align}
+        \Delta\equiv\sigma&=\sqrt{\overline{f^{2}}-\overline{f}^{2}},\\
+        \overline{f^{2}}&=\frac{1}{N}\sum_{j=1}^{N}f^{2}(x_{j}),\nonumber\\
+        \overline{f}^{2}&=\left[\frac{1}{N}\sum_{j=1}^{N}f(x_{j})\right]^{2}.\nonumber
+    \end{align}
+
+    \begin{task}
+        Metodou Monte-Carlo spočítejte integrály
+        \begin{align}
+            I_{1}&\equiv\int_{0}^{2\pi}\e^{-x}\sin{x}\,\d x,\\
+            I_{2}&\equiv\int_{0}^{\sqrt{10\pi}}\frac{\sin{x^{2}}}{\sqrt{1+x^{4}}}\d x.
+        \end{align}
+        První integrál má analytické vyjádření, které si můžete odvodit a porovnat s hodnotou získanou Monte-Carlo integrací; druhý integrál lze spočítat pouze numericky.
+        Metodu můžete otestovat i na jiných známých integrálech.
+    \end{task}
+
+    Síla metody Monte-Carlo se naplno projeví při výpočtu vícerozměrných integrálů.
+    Jak bylo ukázáno, chyba metody závisí jen na celkovému počtu pokusů $N=N_{\text{celkem}}$.
+    Zatímco u jiných metod při požadování určité dané přesnosti výsledku drasticky narůstá časová složitost integrace s rostoucí dimenzí integrované funkce, u Monte-Carla časová složitost na dimenzi závisí jen nepatrně.
+    Ve více rozměrech bývá navíc integrační oblast složitější, k čemuž lze využít metodu hit-and-miss.
+    To se nejlépe ukáže na příkladu.
+
+    \begin{task}
+        Spočítejte čtyřrozměrný integrál
+        \begin{equation}
+            I_{3}\equiv\int_{\Omega}\sin{\sqrt{\ln\left(x+y+z+w+2\right)}}\,\d x\,\d y\,\d z\,\d w,
+        \end{equation}
+        kde integrační oblast je hyperkoule
+        \begin{equation}
+            \Omega: \left(x-\frac{1}{2}\right)^{2}+\left(y-\frac{1}{2}\right)^{2}+\left(z-\frac{1}{2}\right)^{2}+\left(w-\frac{1}{2}\right)^{2}\leq\frac{1}{4}.
+        \end{equation} 
+        Při výpočtu postupujte tak, že nejprve danou hyperkouli vepíšete do hyperkvádru (či hyperkrychle) známých rozměrů, a tudíž známého objemu $V$.
+        Poté pro náhodně zvolený bod v hyperkvádru určíte, zda se trefí do hyperkoule $\Omega$ či nikoliv.
+        Pokud ano, spočítáte funkční hodnotu integrandu v tomto bodě.
+        Jedná se tedy o kombinaci integrace~\eqref{eq:MCInt} a metody hit-and-miss.
+        Budete-li si uchovávat počet hodů $N_{\text{celkem}}$ a počet zásahů $N_{\text{zásah}}$, získáte jako vedlejší produkt objem integrační hyperoblasti pomocí vzorce~\eqref{eq:MCS}.
+    \end{task}
+
+
 
 \begin{thebibliography}{99}
     \bibitem{Mul59} M.E. Muller, {\it A note on a method for generating points uniformly on n-dimensional spheres},
