@@ -11,7 +11,7 @@ def RandomDirection(dimension):
     while True:                 # This is always dangerous - infinite cycle
         randomVector = 2 * generator.random(dimension) - 1
         norm = np.linalg.norm(randomVector) # Norm of the vector
-        if 1! <= 1:
+        if norm <= 1:
             return randomVector / norm
         
 
