@@ -21,20 +21,22 @@
 	pdfauthor={Pavel Stránský},
 	pdffitwindow=true,
 	colorlinks=true,
-	urlcolor=cyan,            %barva textu pri tisku
+	urlcolor=cyan,
 	linkcolor=red,
 	citecolor=green,
 	filecolor=magenta
 }
 
+\graphicspath{{figures/}}
+
 %\babelhyphenation[czech]{ma-te-ma-tic-kých}
 
 \renewcommand\thesubfigure{(\alph{subfigure})}
 
-% Velikost stránky
+% Page size
 \addtolength{\topmargin}{-1.5cm} %\addtolength{\textheight}{-10cm}
-\addtolength{\textwidth}{4cm} \addtolength{\textheight}{4cm} % Šířka a výška textu
-\addtolength{\voffset}{-0.5cm} % Horní okraj
+\addtolength{\textwidth}{4cm} \addtolength{\textheight}{4cm} % Width and height of the text
+\addtolength{\voffset}{-0.5cm} % Top margin
 \addtolength{\hoffset}{-2cm}
 \setlength{\headheight}{15pt}
 
@@ -687,7 +689,7 @@
         }
     \end{solution}
 
-    \begin{task}
+    \begin{task}\label{task:RandomWalk}
         Zamyslete se nad tím, jak byste realizovali náhodnou procházku s konstantní délkou kroku v $d>2$ rozměrech.
         Důležité je dodržet požadavek, aby pohyb do jakéhokoliv směru nastával se stejnou pravděpodobností (esence úlohy tedy spočívá v generování náhodného směru v $d$-rozměrném prostoru).
     \end{task}
@@ -1689,6 +1691,49 @@
     \end{task}
 
     \begin{figure}[!htbp]
+        \centering\epsfig{file=birthday_problem.eps,width=0.6\linewidth}
+        \caption{
+            \protect\small
+            Pravděpodobnost, že ve skupině $n_{g}$ lidí budou mít alespoň dva lidé narozeniny ve stejný den v roce.
+            Svislými čarami je odhad chyby $\pm1\sigma$.
+            Počet pokusů pro metodu Monte-Carlo je $N_{\text{celkem}}=10^{4}$.
+        }
+        \label{fig:BirthdayProblem}
+    \end{figure}
+
+    \begin{solution}
+        Vzorové řešení je v souboru \file{BirthdayProblem.py} a obsahuje dvě funkce:
+        \begin{itemize}
+            \item \code{BirthdayCoincidenceProbability} 
+                určí metodou Monte-Carlo pravděpodobnost, že ve skupině o velikosti $n_{g}=\mathtt{groupSize}$ bude alespoň jedna dvojice, která slaví narozeniny ve stejný den v~roce.
+                Řešení probíhá ve dvou krocích: 
+                \begin{enumerate}
+                    \item nagenergujeme řadu $n_{g}$ čísel mezi $1$ a $366$, které udávají den narozenin,\footnote{
+                        Řešení počítá i s datem narození 29. února, přičemž předpokládá, že pravděpodobnost všech dat narození je stejná.
+                        To však pro narozeniny 29. února neplatí, pravděpodobnost narození s tímto datem je menší.
+                    }
+                    \item zkontrolujeme, zda řada obsahuje dva stejné prvky (ve vzorovém řešení tak, že řadu seřadíme a zkontrolujeme, jestli obsahuje dvě či více stejných čísel v bezprostředně následujících prvcích).
+                \end{enumerate}
+                Funkce vrací hodnotu pravděpodobnosti $p$ a odhad chyby $\Delta p\approx1\sigma_{p}$.
+            \item \code{PlotBirthdayProblem}
+                vykreslí graf pravděpodobností pro interval velikostí skupin.
+                Graf včetně chyb je v obrázku~\ref{fig:BirthdayProblem}.
+        \end{itemize}
+        
+        Na základě těchto funkcí se jednoduše spočítá, že
+        \begin{enumerate}
+            \item Pro $n_{g}=30$ je pravděpodobnost $p\approx70\%$.
+            \item Pro $n_{g}=17$ je pravděpodobnost $p\approx31\%$. 
+        \end{enumerate}
+
+        Program lze triviálně rozšířit a počítat například pravděpodobnost, že
+        \begin{itemize}
+            \item alespoň $d$ lidí bude mít narozeniny ve stejný den,
+            \item alespoň $2$ lidé budou mít narozeniny ve stejný den i rok.
+        \end{itemize}
+    \end{solution}
+
+    \begin{figure}[!htbp]
         \begin{subfigure}{0.44\linewidth}
             \centering\includegraphics[width=\linewidth]{hit_and_miss.png}
             \caption{}
@@ -1748,7 +1793,7 @@
                 \item relativní chyba klesá jako převrácená hodnota odmocniny celkového počtu pokusů $N_{\text{celkem}}$ a
                 \item chceme-li zpřesnit výsledek získaný touto metodou desetkrát, musíme zestonásobit počet pokusů.
             \end{itemize}
-            V praxi za použití běžných výpočetních prostředků lze dosáhnout nanejvýš $N_{\text{celkem}}\approx10^10$, což dá výsledek s relativní chybou minimálně $\delta\approx10^{-5}$, tj. pět desetinných míst.
+            V praxi za použití běžných výpočetních prostředků lze dosáhnout nanejvýš $N_{\text{celkem}}\approx10^{10}$, což dá výsledek s relativní chybou minimálně $\delta\approx10^{-5}$, tj. pět desetinných míst.
 
         \subsubsection{Použití}
             Integrace pomocí metody hit-and-miss se nepoužívá, jelikož je příliš neefektivní. 
@@ -1757,12 +1802,38 @@
             Na druhou stranu se tato metoda hodí k výpočtu povrchů, objemů či hyperobjemů v případě vícerozměrných objektů.
             
             \begin{task}
-                Vytvořte program na výpočet objemu $d$-rozměrné jednotkové koule metodou Monte-Carlo.\footnote{
+                Vytvořte program na výpočet objemu $d$-rozměrné jednotkové koule metodou Monte-Car\-lo.\footnote{
                     Pod $1$-rozměrnou jednotkovou koulí rozumíme úsečku délky 2, pod $2$-rozměrnou jednotkovou koulí jednotkový kruh.
                     Povrch jednotkového kruhu je $S=\pi$, výsledek lze tedy použít i k určení čísla $\pi$, aniž byste museli házet Buffonovou jehlou.
                 }
                 Pro jakou dimenzi bude tento objem největší číslo?
             \end{task}
+
+            \begin{figure}[!htbp]
+                \centering\epsfig{file=volume_ball.eps,width=0.6\linewidth}
+                \caption{
+                    \protect\small
+                    Závislost objemu jednotkové koule na dimenzionalitě prostoru.
+                    Svislými čarami je zobrazena chyba $\Delta V\approx1\sigma_{V}$.
+                    Počet pokusů pro metodu Monte-Carlo je pro každý bod $N_{\text{celkem}}=10^{6}$.
+                }
+                \label{fig:VolumeBall}
+            \end{figure}
+
+            \begin{solution}
+                Vzorový kód je v souboru \file{VolumeBall.py}.
+                Funkce \code{VolumeBall} spočítá objem jednotkové koule metodou Monte-Carlo a vrátí současně odhad chyby.
+                Funkce \code{PlotVolumes} vykreslí graf objemů v závislosti na dimenzi, jak je ukázáno na obrázku~\ref{fig:VolumeBall}.
+                Nejvější objem $V\approx5.27$ dostaneme pro $d=5$.
+                Zde je na místě jistá opatrnost: srovnáváme trochu \uv{jablka s hruškami}, protože samozřejmě objem různěrozměrných koulí má různou dimenzionalitu.
+                Pro jiné než jednotkové koule tato závislost platit nebude.
+
+                Z obrázku je rovněž vidět, že s rostoucím $d$ roste chyba výsledku.
+                To je způsobeno tím, že s rostoucí dimenzionalitou se při metodě hit-and-miss čím dál častěji trefujeme mimo jednotkovou kouli, jinými slovy klesá při zadaném počtu pokusů počet zásahů.\footnote{
+                    Pro $d=15$ je při $N_{\text{celkem}}=10^6$ počet zásahů pouze řádově $10^1$, tj. z každých sto tisíc pokusů se jen jednou trefíme do jednotkové koule, zbytek pokusů padá do \uv{rohů} opsaných krychlí.
+                }
+                Tento jev a jeho příčiny jsme již diskutovali v případě generování náhodného směru v $d$ dimenzích v řešení úlohy~\ref{task:RandomWalk}.
+            \end{solution}
 
     \subsection{Monte-Carlo integrace}
     \begin{figure}[!htbp]
@@ -1824,6 +1895,25 @@
         Metodu můžete otestovat i na jiných známých integrálech.
     \end{task}
 
+    \begin{solution}
+        Řešení je naprogramováno v souboru \file{Itegration.py} dvěma způsoby:
+        \begin{enumerate}
+            \item \code{Integrate1D} 
+                integruje postupným generováním $N_{\text{celkem}}=\mathtt{n}$ náhodných bodů a výpočtem pomocí rovnice~\eqref{eq:MCInt}.
+            \item \code{Integrate1DArray} 
+            nageneruje řadu $N_{\text{celkem}}$ bodů z intervalu $\langle a,b\rangle$, pro tuto řadu spočítá řadu funkčních hodnot a tu pak sečte a vynásobí příslušným prefaktorem, rovněž dle rovnice~\eqref{eq:MCInt}.
+            Tento postup je výrazně rychlejší, neboť obsluha cyklů a volání funkcí pro individuální body stojí v interpetovaných jazycích (jímž Python je) velké množství výpočetního času.
+            Na druhou stranu tento postup vyžaduje mít v operační paměti uložená dlouhá pole bodů $x_{j}$ a $f(x_{j})$ a pro velké počty $N_{\text{celkem}}$ nám dostupná paměť nemusí stačit.
+            Řešením je samozřejmě oba postupy zkombinovat. 
+
+            Výsledky integrálů jsou
+            \begin{align}
+                I_{1}&=\frac{1}{2}\left(1-\e^{-2\pi}\right)\approx0.499,\\
+                I_{2}&\approx0.765.
+            \end{align}
+        \end{enumerate}
+    \end{solution}
+
     Síla metody Monte-Carlo se naplno projeví při výpočtu vícerozměrných integrálů.
     Jak bylo ukázáno, chyba metody závisí jen na celkovému počtu pokusů $N=N_{\text{celkem}}$.
     Zatímco u jiných metod při požadování určité dané přesnosti výsledku drasticky narůstá časová složitost integrace s rostoucí dimenzí integrované funkce, u Monte-Carla časová složitost na dimenzi závisí jen nepatrně.
@@ -1846,7 +1936,13 @@
         Budete-li si uchovávat počet hodů $N_{\text{celkem}}$ a počet zásahů $N_{\text{zásah}}$, získáte jako vedlejší produkt objem integrační hyperoblasti pomocí vzorce~\eqref{eq:MCS}.
     \end{task}
 
-
+    \begin{solution}
+        Řešení pro tento konkrétní integrál je naprogramováno v souboru \file{Integration.py} ve funkci \code{Integral2}.
+        Pro $N_{\text{celkem}}=10^{6}$ tento integrál vychází přibližně
+        \begin{equation}
+            I_{3}\approx0.921.
+        \end{equation}
+    \end{solution}
 
 \begin{thebibliography}{99}
     \bibitem{Mul59} M.E. Muller, {\it A note on a method for generating points uniformly on n-dimensional spheres},
