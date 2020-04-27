@@ -21,6 +21,9 @@ def Integrate1D(n, Function, a, b):
         result += Function(x)
 
     result = (b - a) / n * result
+
+    print(result)
+
     return result
 
 
@@ -53,4 +56,4 @@ def Integral2(n):
 def CalculateIntegrals():
     print("I1 = {}".format(Integrate1DArray(1000000, f1, 0, 2 * np.pi)))
     print("I2 = {}".format(Integrate1DArray(1000000, f2, 0, np.sqrt(10 * np.pi))))
-    print("I3 = {}".format(Integral2(1000000))
+    print("I3 = {}".format(Integral2(1000000)))
