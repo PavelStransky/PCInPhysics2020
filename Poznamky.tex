@@ -2508,7 +2508,122 @@
         \end{equation}
     \end{task}
 
+    \begin{solution}
+        Řešení všech tří úloh je v souboru \file{solution.nb}.
+    \end{solution}
+
     Pokud se chcete s možnostmi programu Mathematica seznámit hlouběji a dozvědět se více o pokročilých možnostech programování, které nabízí, doporučuji dedikovanou přednášku Dr. Tomáše Ledvinky \href{https://is.cuni.cz/studium/predmety/index.php?tid=&do=predmet&kod=NTMF048}{Použití systémů počítačové algebry ve fyzice}.
+
+\section{Animace}
+    V dnešní době je čím dál běžnější publikovat výsledky vědecké práce ve formě animací.
+    Co je to animace? 
+    Jedná se vlastně jen o sled po sobě jdoucích obrázků, kde každý obrázek --- snímek --- zobrazuje jeden časový okamžik (jako ve filmu).
+    Jednoduchou animaci tedy vytvoříte tak, že napočítáte a vykreslíte sekvenci obrázků a ty pak promítáte po sobě.
+    Čím kratší bude interval mezi snímky, tím bude výsledný dojem z animace plynulejší.\footnote{
+        V praxi se také používá převrácená hodnota délky intervalu mezi snímky, tzv. snímková frekvence fps = frames per second.
+    } 
+    Někdy však může být naopak žádoucí mít interval mezi snímky dlouhý, i několikavteřinový, abychom stihli zaregistrovat detaily v konkrétním obrázku.
+
+    \python{
+        Nejzákladnější objekt pro vytváření animací v Pythonu je \href{https://matplotlib.org/api/_as_gen/matplotlib.animation.FuncAnimation.html}{\code{FuncAnimation}} z modulu \file{matplotlib. animation}.
+        Tento objekt přijímá dva základní parametry:
+        \begin{enumerate}
+            \item \code{fig}:
+                Objekt s obrázkem, do kterého se bude animace vykreslovat.
+    
+            \item \code{animate}:
+                Odkaz na funkci s jedním povinným parametrem udávajícím číslo snímku (tj. čas, ve kterém chceme animaci zobrazit).            
+        \end{enumerate}
+    
+        Důležité dodatečné parametry objektu \code{FuncAnimation} jsou:
+        \begin{enumerate}
+            \item \code{interval}: 
+                Prodleva mezi jednotlivými snímky v milisekundách. 
+            \item \code{frames}:
+                Počet snímků (nebo iterátor s indexy snímků).
+                Pokud není specifikován, animace probíhá do nekonečna.
+                Pokud je specifikován, animace po dokončení daného počtu snímků začne znovu od začátku.
+                Pokud chceme animaci uložit do souboru (sekce~\ref{sec:AnimSave}), musíme tento parametr specifikovat.
+            \item \code{blit}:
+                Nastavíme-li jako \code{True}, používá se optimalizované vykreslování. V tom případě musíme z funkce zadané parametrem \code{animate} vrátit všechny změněné objekty.
+                Zapnutí tohoto parametru někdy způsobuje chyby při ukládání animace. 
+            \item \code{init\_func}:
+                Udává odkaz na funkci, která je zavolána před zahájením animace (například pro vykreslení objektů, které se v průběhu animace nemění).
+        \end{enumerate} 
+    }
+
+    V následujících několika příkladech jsem se snažil o maximální jednoduchost kódu.
+    Komplikovanější příklady (například dvojité kyvadlo nebo jednoduchou animaci interagujících míčků v krabici) lze nalézt pěkném tutoriálu na stránce \url{https://jakevdp.github.io/blog/2012/08/18/matplotlib-animation-tutorial/}.
+
+    Pokud používáte prostředí Spyder, musíte vypnout inline grafy příkazem \code{\%matplotlib auto} v konzoli REPL.
+
+    \begin{example}
+        Triviální příklad, ve kterém necháme létat bod po kružnici o    jednotkovém poloměru $r=1$ je v souboru \file{CircularMotion.py}.
+        Poloha bodu v čase $t=\mathtt{i} * \mathtt{interval} / 1000$ (\code{i}dělíme tisícem proto, že \code{interval} se měří v milisekundách) je
+        \begin{equation}
+            x=r\cos\frac{2\pi}{T}t,\qquad
+            y=r\sin\frac{2\pi}{T}t,
+        \end{equation}
+        kde $T$ $[\mathrm{s}^{-1}]$ je perioda pohybu.
+        V souboru jsou dodatečné komentáře k jednotlivým příkazům.
+    \end{example}
+
+    \begin{example}
+        Často chceme animovat řešení diferenciálních rovnic (například pohybových rovnic).
+        V tom případě se hodí předpočítat si trajektorii a tu pak postupně \uv{odkrývat}.
+        Ve vzorovém souboru \code{RandomWalkAnimation.py} ukazuji, jak tímto způsobem vykreslit třírozměrnou náhodnou procházku, které jsme se věnovali v úloze~\ref{task:RandomWalk}.
+        V tomto příkladu se navíc naučíme vykreslovat 3D grafy.
+    \end{example}
+
+    \begin{example}
+        Poslední příklad v souboru \file{FourierTransformAnimation.py} ukazuje využití animace pro Fourierovskou analýzu zvuku v reálném čase.
+        Pomocí funkce \code{sounddevice.rec} nahrajeme krátký zvukový úsek, provedeme jeho Fourierovu analýzu, spočítáme spektrum a vykreslíme.
+        Zároveň určíme dominantní frekvenci.
+        Spusťte si kód, zapněte mikrofon a zkuste zazpívat nebo zahrát jeden tón. 
+        Uvidíte jeho okamžité spektrum a frekvenci s nejvyšší amplitudou.
+        Na tomto principu fungují například elektronické ladičky hudebních nástrojů.
+    \end{example}
+
+    \subsection{Ukládání do souboru}\label{sec:AnimSave}
+        Python standardně neobsahuje nástroje a knihovny, které by umožnily uložit vypočítané video.
+        K tomu je nutné doinstalovat dodatečné nástroje.
+        V úvahu přicházejí dva nejběžnější formáty: animovaný GIF a MP4 video.
+        V následujícím textu uvádím návod pro operační systém Windows.
+        V Linuxu nebo v iOS by měl být postup podobný.
+
+        \subsubsection{GIF}
+            Nejprve musíme nainstalovat open-source balík \href{https://imagemagick.org}{imagemagick}.
+            Instalační soubory pro Windows jsou \href{https://imagemagick.org/script/download.php}{zde}.
+            Při instalaci je nutné povolit volbu \emph{Add application directory to your system path}.
+            Pokud navíc povolíme i \emph{Install FFmpeg}, máme hotovo i pro export jako MP4 soubor.
+
+            \python{
+                Pokud nyní v kódu instanci objektu \code{FuncAnimation} uložíme do proměnné \code{anim}, animaci uložíme zavoláním
+                \begin{equation*}
+                    \texttt{anim.save("anim.gif", writer="imegemagick")}
+                \end{equation*}
+                Animaci je nutné uložit dříve, než ji vykreslíme pomocí \code{plt.plot()}.
+                Aby ukládání fungovalo, je nutné při vytváření objektu \code{FuncAnimation} zadat parametr \code{frames} (celkový počet snímků).
+            }
+
+        \subsubsection{MP4}
+            K ukládání do MP4 souborů je potřeba open-source balík \href{https://www.ffmpeg.org}{ffmpeg}.\footnote{
+                Pokud nainstalujeme \href{https://imagemagick.org}{imagemagick}, ten v sobě zahrnuje i \file{ffmpeg}, a tudíž není nutné ho instalovat znovu.
+            }
+            Z uvedené webové stránky projektu stáhneme ZIP soubor, který rozbalíme do nějaké vhodné složky.
+            Dále je nutné v systémových proměnných přidat podsložku \file{bin} složky, kam jsme balík \file{ffmpeg} rozbalili.
+            
+            \python{
+                Animaci jako video MP4 uložíme příkazem
+                \begin{equation*}
+                    \texttt{anim.save("anim.mp4", extra\_args=["-vcodec", "libx264"])}
+                \end{equation*}
+                kde dodatečný parametr specifikuje použití kodeku \code{x264}, který je dostatečně univerzální (je součástí specifikace HTML5, takže by ho měly umět přehrát například moderní webové prohlížeče).
+            }
+            
+            V příkladech \file{CircularMotionAnimation.py} a \file{RandomWalkAnimation.py} lze ukládání vyzkoušet odkomentováním zakomentovaných řádků ke konci souboru.
+            Pro správně uložení může být potřeba vypnout optimalizované vykreslování (parametr \code{blit=False}).
+            To platí například o 3D grafu v příkladu náhodné procházky.
 
 \begin{thebibliography}{99}
     \bibitem{Mul59} M.E. Muller, {\it A note on a method for generating points uniformly on n-dimensional spheres},
