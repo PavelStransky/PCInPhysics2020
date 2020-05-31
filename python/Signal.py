@@ -20,7 +20,8 @@ def TestSignal(N=2000, fs=2000):
     plt.xlabel("$f$ [Hz]")
     plt.ylabel("$A$")
     plt.show()
-
+    
+    print(y)
 
 def Vowels(part):
     """ Task 9.4 """
@@ -97,8 +98,8 @@ def BlackHoles(windowSize=2000, step=100):
     plt.ylim(0, 500)
     plt.show()
 
-#TestSignal(2000, 2000)
-#TestSignal(1000, 1000)
-#Vowels(slice(3000, 5000))
+TestSignal(2000, 2000)
+TestSignal(1000, 1000)
+Vowels(slice(3000, 5000))
 BlackHoles()
 FTMethodComparison()
